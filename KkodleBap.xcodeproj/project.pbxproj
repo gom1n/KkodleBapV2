@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		236EE1782E44EEEE005B52D5 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 236EE1772E44EEEE005B52D5 /* SnapKit */; };
+		23A662F52E44EBCD006D8499 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 23A662F42E44EBCD006D8499 /* Then */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		23A662D62E44EB45006D8499 /* KkodleBap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KkodleBap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +41,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				23A662F52E44EBCD006D8499 /* Then in Frameworks */,
+				236EE1782E44EEEE005B52D5 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +85,8 @@
 			);
 			name = KkodleBap;
 			packageProductDependencies = (
+				23A662F42E44EBCD006D8499 /* Then */,
+				236EE1772E44EEEE005B52D5 /* SnapKit */,
 			);
 			productName = KkodleBap;
 			productReference = 23A662D62E44EB45006D8499 /* KkodleBap.app */;
@@ -107,6 +116,10 @@
 			);
 			mainGroup = 23A662CD2E44EB45006D8499;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				23A662F32E44EBCD006D8499 /* XCRemoteSwiftPackageReference "Then" */,
+				236EE1762E44EEEE005B52D5 /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 23A662D72E44EB45006D8499 /* Products */;
 			projectDirPath = "";
@@ -148,6 +161,7 @@
 				DEVELOPMENT_TEAM = B974XY47GZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = KkodleBap/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "꼬들밥";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -158,7 +172,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = gomin.KkodleBap;
+				PRODUCT_BUNDLE_IDENTIFIER = gomin.KkodleGame;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -176,6 +190,7 @@
 				DEVELOPMENT_TEAM = B974XY47GZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = KkodleBap/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "꼬들밥";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -186,7 +201,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = gomin.KkodleBap;
+				PRODUCT_BUNDLE_IDENTIFIER = gomin.KkodleGame;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -337,6 +352,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		236EE1762E44EEEE005B52D5 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		23A662F32E44EBCD006D8499 /* XCRemoteSwiftPackageReference "Then" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/devxoul/Then";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		236EE1772E44EEEE005B52D5 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 236EE1762E44EEEE005B52D5 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		23A662F42E44EBCD006D8499 /* Then */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23A662F32E44EBCD006D8499 /* XCRemoteSwiftPackageReference "Then" */;
+			productName = Then;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 23A662CE2E44EB45006D8499 /* Project object */;
 }
