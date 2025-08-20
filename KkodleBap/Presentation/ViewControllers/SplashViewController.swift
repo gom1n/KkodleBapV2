@@ -12,7 +12,7 @@ import Then
 
 class SplashViewController: UIViewController {
     private let imageView = UIImageView().then {
-        $0.image = UIImage(named: "kkodle")
+        $0.image = .kkodleLightblue
         $0.contentMode = .scaleAspectFit
         $0.alpha = 0
     }
@@ -35,7 +35,8 @@ class SplashViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .light_blue
+        
         setupViews()
         animateViews()
     }
