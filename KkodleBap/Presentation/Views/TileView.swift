@@ -14,9 +14,9 @@ enum TileColor {
 
     var backgroundColor: UIColor {
         switch self {
-        case .gray: return UIColor.systemBlue.withAlphaComponent(0.05)
-        case .lightBlue: return UIColor.systemTeal.withAlphaComponent(0.5)
-        case .blue: return UIColor.systemBlue.withAlphaComponent(0.8)
+        case .gray: return .blue_1
+        case .lightBlue: return .blue_4
+        case .blue: return .blue_5
         }
     }
 }

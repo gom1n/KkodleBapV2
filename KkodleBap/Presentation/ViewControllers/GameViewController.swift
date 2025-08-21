@@ -32,7 +32,7 @@ class GameViewController: UIViewController {
     
     private let tileContainer = UIStackView().then {
         $0.axis = .vertical
-        $0.spacing = 6
+        $0.spacing = 8
         $0.alignment = .center
         $0.distribution = .equalSpacing
     }
@@ -49,7 +49,7 @@ class GameViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .gray_0
         setupLayout()
         setupKeyboardCallbacks()
         renderTiles()
@@ -82,18 +82,17 @@ class GameViewController: UIViewController {
         tileContainer.snp.makeConstraints {
             $0.top.equalTo(subtitleLabel.snp.bottom).offset(30)
             $0.leading.trailing.equalToSuperview().inset(20)
-            $0.height.equalTo(330)
         }
         
         errorLabel.snp.makeConstraints {
-            $0.top.equalTo(tileContainer.snp.bottom).offset(8)
+            $0.top.equalTo(tileContainer.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
         
         keyboardView.snp.makeConstraints {
             $0.top.greaterThanOrEqualTo(tileContainer.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview().inset(10)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
+            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-24)
         }
     }
     
@@ -121,7 +120,7 @@ class GameViewController: UIViewController {
         for row in 0..<6 {
             let hStack = UIStackView().then {
                 $0.axis = .horizontal
-                $0.spacing = 4
+                $0.spacing = 8
                 $0.distribution = .equalSpacing
                 $0.alignment = .center
             }

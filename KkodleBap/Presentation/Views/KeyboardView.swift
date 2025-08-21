@@ -67,8 +67,8 @@ class KeyboardView: UIView {
             if i == rows.count - 1 {
                 // 확인 버튼
                 let submitButton = makeSystemButton(icon: "checkmark")
-                submitButton.backgroundColor = .systemBlue
-                submitButton.tintColor = .white
+                submitButton.backgroundColor = .blue_5
+                submitButton.tintColor = .gray_0
                 submitButton.addTarget(self, action: #selector(submitTapped), for: .touchUpInside)
                 hStack.addArrangedSubview(submitButton)
             }
@@ -78,13 +78,17 @@ class KeyboardView: UIView {
     }
 
     private func makeJamoButton(title: String) -> UIButton {
-        return UIButton(type: .system).then {
-            $0.setTitle(title, for: .normal)
-            $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
-            $0.backgroundColor = UIColor.systemGray5
-            $0.layer.cornerRadius = 6
-            $0.setTitleColor(.label, for: .normal)
+        let button = UIButton(type: .system).then {
+                        $0.setTitle(title, for: .normal)
+                        $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
+                        $0.backgroundColor = .blue_1
+                        $0.layer.cornerRadius = 6
+                        $0.setTitleColor(.label, for: .normal)
+                    }
+        button.snp.makeConstraints { make in
+            make.height.equalTo(50)
         }
+        return button
     }
 
     private func makeSystemButton(icon: String) -> UIButton {
@@ -104,18 +108,18 @@ class KeyboardView: UIView {
             if let color = colors[jamo] {
                 switch color {
                 case .blue:
-                    button.backgroundColor = .systemBlue
+                    button.backgroundColor = .blue_5
                     button.setTitleColor(.white, for: .normal)
                 case .lightBlue:
-                    button.backgroundColor = .systemTeal
+                    button.backgroundColor = .blue_4
                     button.setTitleColor(.white, for: .normal)
                 case .gray:
-                    button.backgroundColor = .systemGray3
+                    button.backgroundColor = .gray_2
                     button.setTitleColor(.label, for: .normal)
                 }
             } else {
                 // 기본값
-                button.backgroundColor = .systemGray5
+                button.backgroundColor = .blue_1
                 button.setTitleColor(.label, for: .normal)
             }
         }

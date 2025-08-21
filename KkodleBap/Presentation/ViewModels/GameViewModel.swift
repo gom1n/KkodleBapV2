@@ -23,6 +23,8 @@ class GameViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var keyboardColors: [String: TileColor] = [:]
 
+    public var ANSWER_COUNT: Int = 6
+    
     public var rawAnswer: String = ""
     public var answer: [String] = []
     private let maxAttempts = 6
