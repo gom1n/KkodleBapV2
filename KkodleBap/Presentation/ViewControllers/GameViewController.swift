@@ -161,21 +161,34 @@ class GameViewController: UIViewController {
     private func checkGameResult() {
         guard viewModel.isGameOver else { return }
         if viewModel.didWin {
-            showAlert(
-                title: "🎉 축하합니다! 🎉",
-                message: "정답은 '\(viewModel.rawAnswer)' 입니다!",
-                imageName: "kkodle-23",
-                subtext: "밥풀을 모은 꼬들이는 행복해요!",
-                showCopy: true
-            )
+            KoodleAlert.Builder()
+                .setTitle(viewModel.rawAnswer)
+                .setMessage("축하합니다!\n밥풀을 모은 꼬들이는 행복해요.")
+                .addAction(.init("결과 복사하기", style: .secondary) {
+                    self.viewModel.copyResultToClipboard()
+                })
+                .addAction(.init("새로 시작", style: .primary) {
+                    self.viewModel.resetGame()
+                    self.renderTiles()
+                })
+                .present(from: self)
         } else {
-            showAlert(
-                title: "😢 아쉽네요!",
-                message: "정답은 '\(viewModel.rawAnswer)' 입니다!",
-                imageName: "empty",
-                subtext: "텅 - 다시 한번 해볼까요?",
-                showCopy: false
-            )
+            let imageView = UIImageView(image: .kkodle0)
+            imageView.contentMode = .scaleAspectFit
+            imageView.heightAnchor.constraint(equalToConstant: 120).isActive = true
+            
+            KoodleAlert.Builder()
+                .setTitle(viewModel.rawAnswer)
+                .setMessage("텅 - 다시 한번 해볼까요?")
+                .addCustomView(imageView)
+                .addAction(.init("새로 시작", style: .secondary) {
+                    self.viewModel.resetGame()
+                    self.renderTiles()
+                })
+                .addAction(.init("광고 보고 맞춰보기", style: .primary) {
+                    // TODO: Logic
+                })
+                .present(from: self)
         }
     }
     
