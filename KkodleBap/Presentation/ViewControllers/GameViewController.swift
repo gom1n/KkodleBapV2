@@ -40,6 +40,11 @@ class GameViewController: UIViewController {
         $0.textAlignment = .center
     }
     
+    private let mapButton = UIButton().then {
+        $0.setTitle("맵 보기", for: .normal)
+        $0.setTitleColor(.black, for: .normal)
+    }
+    
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
         $0.showsHorizontalScrollIndicator = false
@@ -65,17 +70,22 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .gray_0
-        self.navigationController?.isNavigationBarHidden = true
         
         setupLayout()
         setupKeyboardCallbacks()
         renderTiles()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.navigationController?.isNavigationBarHidden = true
+    }
+    
     private func setupLayout() {
         view.addSubview(titleLabel)
         view.addSubview(subtitleLabel)
         view.addSubview(bapContainer)
+        view.addSubview(mapButton)
         bapContainer.addSubview(bapImage)
         bapContainer.addSubview(bapCount)
         scrollView.addSubview(tileContainer)
@@ -108,6 +118,11 @@ class GameViewController: UIViewController {
             make.leading.equalTo(bapImage.snp.trailing).offset(4)
         }
         
+        mapButton.snp.makeConstraints { make in
+            make.centerY.equalTo(bapContainer)
+            make.leading.equalToSuperview().offset(20)
+        }
+        
         scrollView.snp.makeConstraints {
             $0.top.equalTo(subtitleLabel.snp.bottom).offset(30)
             $0.leading.trailing.equalToSuperview().inset(45)
@@ -131,6 +146,8 @@ class GameViewController: UIViewController {
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(bapTapped))
         bapContainer.addGestureRecognizer(tapGesture)
+        
+        mapButton.addTarget(self, action: #selector(moveToMap), for: .touchUpInside)
     }
     
     private func setupKeyboardCallbacks() {
@@ -282,6 +299,19 @@ class GameViewController: UIViewController {
         generator.impactOccurred()
         
         // TODO: Logic
+    }
+    
+    @objc private func moveToMap() {
+        // 진동
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+        
+        let mapVC = MapsViewController()
+        mapVC.mapChangeAction = { [weak self] in
+            self?.viewModel.resetGame()
+            self?.renderTiles()
+        }
+        self.navigationController?.pushViewController(mapVC, animated: true)
     }
 }
 

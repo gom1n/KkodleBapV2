@@ -24,7 +24,9 @@ class GameViewModel: ObservableObject {
     @Published var keyboardColors: [String: TileColor] = [:]
 
     // 정답의 자모음 개수
-    public var ANSWER_COUNT: Int = 6
+    public var ANSWER_COUNT: Int {
+        UserManager.mapVersion
+    }
     public var rawAnswer: String = ""
     public var answer: [String] = []
     
