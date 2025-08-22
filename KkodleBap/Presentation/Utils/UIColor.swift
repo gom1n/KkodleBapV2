@@ -18,6 +18,7 @@ public extension UIColor{
     public static let gray_0 = UIColor(r: 255, g: 255, b: 255)
     public static let gray_1 = UIColor(r: 231, g: 231, b: 236)
     public static let gray_2 = UIColor(r: 199, g: 199, b: 203)
+    public static let gray_3 = UIColor(r: 64, g: 68, b: 73)
 }
 
 extension UIColor {

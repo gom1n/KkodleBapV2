@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 import Then
 
-import UIKit
 
 // MARK: - Action
 public struct KoodleAlertAction {
@@ -27,17 +26,35 @@ public struct KoodleAlertAction {
 // MARK: - ViewController
 public final class KoodleAlertViewController: UIViewController {
 
+    // UI
+    public let dimView = UIView().then {
+        $0.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        $0.alpha = 0
+    }
+    public let container = UIView().then {
+        $0.backgroundColor = .gray_0
+        $0.layer.cornerRadius = 16
+        $0.layer.masksToBounds = true
+        $0.alpha = 0
+        $0.transform = CGAffineTransform(scaleX: 0.92, y: 0.92)
+    }
+    private let vStack = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 12
+        $0.alignment = .fill
+        $0.layoutMargins = UIEdgeInsets(top: 20, left: 20, bottom: 16, right: 20)
+        $0.isLayoutMarginsRelativeArrangement = true
+    }
+    private let buttonArea = UIStackView().then {
+        $0.spacing = 8
+        $0.distribution = .fillEqually
+    }
+    
     // Config
     private let alertTitle: String?
     private let message: String?
     private let customViews: [UIView]
     private let actions: [KoodleAlertAction]
-
-    // UI
-    public let dimView = UIView()
-    public let container = UIView()
-    private let vStack = UIStackView()
-    private let buttonArea = UIStackView()
 
     // Init
     public init(title: String?,
@@ -57,71 +74,48 @@ public final class KoodleAlertViewController: UIViewController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Dim
         view.backgroundColor = .clear
-        dimView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
-        dimView.alpha = 0
+        
         view.addSubview(dimView)
-        dimView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            dimView.topAnchor.constraint(equalTo: view.topAnchor),
-            dimView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            dimView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            dimView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-        ])
+        view.addSubview(container)
+        container.addSubview(vStack)
+        
+        dimView.snp.makeConstraints { make in
+            make.top.bottom.leading.trailing.equalToSuperview()
+        }
+        
+        container.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(24)
+        }
+        
+        vStack.snp.makeConstraints { make in
+            make.top.leading.trailing.bottom.equalToSuperview()
+        }
+        
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapOutside))
         dimView.addGestureRecognizer(tap)
 
-        // Container
-        container.backgroundColor = .gray_0
-        container.layer.cornerRadius = 16
-        container.layer.masksToBounds = true
-        container.alpha = 0
-        container.transform = CGAffineTransform(scaleX: 0.92, y: 0.92)
-
-        view.addSubview(container)
-        container.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            container.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            container.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            container.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 24),
-            container.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -24),
-            container.widthAnchor.constraint(lessThanOrEqualToConstant: 340)
-        ])
-
-        // Vertical stack (content)
-        vStack.axis = .vertical
-        vStack.spacing = 12
-        vStack.alignment = .fill
-        vStack.layoutMargins = UIEdgeInsets(top: 20, left: 20, bottom: 16, right: 20)
-        vStack.isLayoutMarginsRelativeArrangement = true
-        container.addSubview(vStack)
-        vStack.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            vStack.topAnchor.constraint(equalTo: container.topAnchor),
-            vStack.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            vStack.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-        ])
-
         // Title
         if let title = alertTitle, !title.isEmpty {
-            let titleLabel = UILabel()
-            titleLabel.text = title
-            titleLabel.font = .preferredFont(forTextStyle: .headline)
-            titleLabel.numberOfLines = 0
-            titleLabel.textAlignment = .center
+            let titleLabel = UILabel().then {
+                $0.text = title
+                $0.font = .preferredFont(forTextStyle: .headline)
+                $0.numberOfLines = 0
+                $0.textAlignment = .center
+            }
             vStack.addArrangedSubview(titleLabel)
         }
 
         // Message
         if let msg = message, !msg.isEmpty {
-            let messageLabel = UILabel()
-            messageLabel.text = msg
-            messageLabel.font = .preferredFont(forTextStyle: .subheadline)
-            messageLabel.textColor = .secondaryLabel
-            messageLabel.numberOfLines = 0
-            messageLabel.textAlignment = .center
+            let messageLabel = UILabel().then {
+                $0.text = msg
+                $0.font = .preferredFont(forTextStyle: .subheadline)
+                $0.textColor = .secondaryLabel
+                $0.numberOfLines = 0
+                $0.textAlignment = .center
+            }
             vStack.addArrangedSubview(messageLabel)
         }
 
@@ -132,38 +126,12 @@ public final class KoodleAlertViewController: UIViewController {
 
         // Buttons area
         buttonArea.axis = (actions.count == 2) ? .horizontal : .vertical
-        buttonArea.spacing = 8
-        buttonArea.distribution = .fillEqually
-        let topSeparator = UIView()
-        topSeparator.backgroundColor = .clear
-        topSeparator.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
-        vStack.addArrangedSubview(topSeparator)
-        vStack.addArrangedSubview(buttonArea)
-
         // Buttons
-        for (idx, action) in actions.enumerated() {
+        vStack.addArrangedSubview(buttonArea)
+        for (_, action) in actions.enumerated() {
             let btn = makeButton(for: action)
             buttonArea.addArrangedSubview(btn)
-
-            if actions.count == 2 && idx == 0 {
-                // vertical separator for two buttons
-                let sep = UIView()
-                sep.backgroundColor = .clear
-                sep.translatesAutoresizingMaskIntoConstraints = false
-                buttonArea.addSubview(sep)
-                NSLayoutConstraint.activate([
-                    sep.widthAnchor.constraint(equalToConstant: 0.5),
-                    sep.topAnchor.constraint(equalTo: buttonArea.topAnchor),
-                    sep.bottomAnchor.constraint(equalTo: buttonArea.bottomAnchor),
-                    sep.centerXAnchor.constraint(equalTo: buttonArea.centerXAnchor)
-                ])
-            }
         }
-
-        // Bottom constraint to container
-        let bottom = vStack.bottomAnchor.constraint(equalTo: container.bottomAnchor)
-        bottom.priority = .required
-        bottom.isActive = true
     }
 
     private func makeButton(for action: KoodleAlertAction) -> UIButton {
@@ -207,9 +175,10 @@ public final class KoodleAlertViewController: UIViewController {
     @objc private func tapButton(_ sender: UIButton) {
         // 어떤 버튼인지 찾기
         if let action = actions.first(where: { actionHash($0) == sender.tag }) {
-            dismiss(animated: true) { action.handler?() }
+//            dismiss(animated: true) { action.handler?() }
+            action.handler?()
         } else {
-            dismiss(animated: true, completion: nil)
+//            dismiss(animated: true, completion: nil)
         }
     }
 

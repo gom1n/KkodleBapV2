@@ -24,10 +24,20 @@ class GameViewController: UIViewController {
         $0.textAlignment = .center
     }
     
-    private let questionButton = UIButton(type: .system).then {
-        $0.setImage(UIImage(systemName: "questionmark.circle"), for: .normal)
-        $0.tintColor = .gray
-//        $0.addTarget(self, action: #selector(didTapQuestion), for: .touchUpInside)
+    private let bapContainer = UIView().then {
+        $0.isUserInteractionEnabled = true
+    }
+    
+    private let bapImage = UIImageView().then {
+        $0.image = .bap.withRenderingMode(.alwaysOriginal)
+        $0.contentMode = .scaleAspectFit
+    }
+    
+    private let bapCount = UILabel().then {
+        $0.text = "1"
+        $0.textColor = .black
+        $0.font = .systemFont(ofSize: 28, weight: .bold)
+        $0.textAlignment = .center
     }
     
     private let tileContainer = UIStackView().then {
@@ -50,6 +60,8 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .gray_0
+        self.navigationController?.isNavigationBarHidden = true
+        
         setupLayout()
         setupKeyboardCallbacks()
         renderTiles()
@@ -58,7 +70,9 @@ class GameViewController: UIViewController {
     private func setupLayout() {
         view.addSubview(titleLabel)
         view.addSubview(subtitleLabel)
-        view.addSubview(questionButton)
+        view.addSubview(bapContainer)
+        bapContainer.addSubview(bapImage)
+        bapContainer.addSubview(bapCount)
         view.addSubview(tileContainer)
         view.addSubview(errorLabel)
         view.addSubview(keyboardView)
@@ -73,15 +87,24 @@ class GameViewController: UIViewController {
             $0.centerX.equalToSuperview()
         }
         
-        questionButton.snp.makeConstraints {
-            $0.centerY.equalTo(titleLabel)
-            $0.trailing.equalToSuperview().inset(20)
-            $0.width.height.equalTo(30)
+        bapContainer.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(4)
+            make.trailing.equalToSuperview().offset(-30)
+        }
+        
+        bapImage.snp.makeConstraints {
+            $0.leading.centerY.top.bottom.equalToSuperview()
+            $0.width.height.equalTo(50)
+        }
+        
+        bapCount.snp.makeConstraints { make in
+            make.centerY.trailing.equalToSuperview()
+            make.leading.equalTo(bapImage.snp.trailing).offset(4)
         }
         
         tileContainer.snp.makeConstraints {
             $0.top.equalTo(subtitleLabel.snp.bottom).offset(30)
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.leading.trailing.equalToSuperview().inset(45)
         }
         
         errorLabel.snp.makeConstraints {
@@ -91,9 +114,12 @@ class GameViewController: UIViewController {
         
         keyboardView.snp.makeConstraints {
             $0.top.greaterThanOrEqualTo(tileContainer.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview().inset(24)
+            $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-24)
         }
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(bapTapped))
+        bapContainer.addGestureRecognizer(tapGesture)
     }
     
     private func setupKeyboardCallbacks() {
@@ -117,7 +143,12 @@ class GameViewController: UIViewController {
     private func renderTiles() {
         tileContainer.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        for row in 0..<6 {
+        let answerCount = viewModel.ANSWER_COUNT
+        let screenWidth = UIScreen.main.bounds.width
+        let tileContainerSize: CGFloat = (screenWidth - 45 * 2) - (CGFloat(answerCount - 1) * 8)
+        let tileSize: CGFloat = tileContainerSize / CGFloat(answerCount)
+        
+        for row in 0..<answerCount {
             let hStack = UIStackView().then {
                 $0.axis = .horizontal
                 $0.spacing = 8
@@ -128,18 +159,18 @@ class GameViewController: UIViewController {
             if row < viewModel.attempts.count {
                 let tiles = viewModel.attempts[row]
                 for tile in tiles {
-                    let view = TileView(character: tile.character, color: tile.color)
+                    let view = TileView(character: tile.character, color: tile.color, size: tileSize)
                     hStack.addArrangedSubview(view)
                 }
             } else if row == viewModel.attempts.count {
-                for i in 0..<6 {
+                for i in 0..<answerCount {
                     let character = viewModel.currentInput.indices.contains(i) ? viewModel.currentInput[i] : ""
-                    let view = TileView(character: character)
+                    let view = TileView(character: character, size: tileSize)
                     hStack.addArrangedSubview(view)
                 }
             } else {
-                for _ in 0..<6 {
-                    let view = TileView()
+                for _ in 0..<answerCount {
+                    let view = TileView(size: tileSize)
                     hStack.addArrangedSubview(view)
                 }
             }
@@ -161,57 +192,123 @@ class GameViewController: UIViewController {
     private func checkGameResult() {
         guard viewModel.isGameOver else { return }
         if viewModel.didWin {
-            KoodleAlert.Builder()
-                .setTitle(viewModel.rawAnswer)
-                .setMessage("축하합니다!\n밥풀을 모은 꼬들이는 행복해요.")
-                .addAction(.init("결과 복사하기", style: .secondary) {
-                    self.viewModel.copyResultToClipboard()
-                })
-                .addAction(.init("새로 시작", style: .primary) {
-                    self.viewModel.resetGame()
-                    self.renderTiles()
-                })
-                .present(from: self)
+            self.showSuccessAlert()
         } else {
-            let imageView = UIImageView(image: .kkodle0)
-            imageView.contentMode = .scaleAspectFit
-            imageView.heightAnchor.constraint(equalToConstant: 120).isActive = true
-            
-            KoodleAlert.Builder()
-                .setTitle(viewModel.rawAnswer)
-                .setMessage("텅 - 다시 한번 해볼까요?")
-                .addCustomView(imageView)
-                .addAction(.init("새로 시작", style: .secondary) {
-                    self.viewModel.resetGame()
-                    self.renderTiles()
-                })
-                .addAction(.init("광고 보고 맞춰보기", style: .primary) {
-                    // TODO: Logic
-                })
-                .present(from: self)
+            self.showChallengeAlert()
         }
     }
     
-    private func showAlert(
-        title: String,
-        message: String,
-        imageName: String,
-        subtext: String,
-        showCopy: Bool
-    ) {
-        let alert = UIAlertController(title: title, message: "\(message)\n\(subtext)", preferredStyle: .alert)
+    private func showSuccessAlert() {
+        // TODO: 성공 image
         
-        if showCopy {
-            alert.addAction(UIAlertAction(title: "📋 결과 복사하기", style: .default) { _ in
+        KoodleAlert.Builder()
+            .setTitle(viewModel.rawAnswer)
+            .setMessage("축하합니다!\n밥풀을 모은 꼬들이는 행복해요.")
+            .addAction(.init("결과 복사하기", style: .secondary) {
                 self.viewModel.copyResultToClipboard()
+                self.showToast(message: "결과가 복사되었습니다.🍚")
             })
+            .addAction(.init("새로 시작", style: .primary) {
+                self.dismiss(animated: true) {
+                    self.viewModel.resetGame()
+                    self.renderTiles()
+                }
+            })
+            .present(from: self)
+    }
+    
+    private func showChallengeAlert() {
+        let imageView = UIImageView(image: .kkodle0)
+        imageView.contentMode = .scaleAspectFit
+        imageView.heightAnchor.constraint(equalToConstant: 120).isActive = true
+        
+        KoodleAlert.Builder()
+            .setTitle("이어서 더 도전해볼까요?")
+            .setMessage("꼬들밥 한 그릇으로 기회를 한 번 더 얻을 수 있습니다.")
+            .addCustomView(imageView)
+            .addAction(.init("그만할래요", style: .secondary) {
+                self.dismiss(animated: false) {
+                    self.showFailAlert()
+                }
+            })
+            .addAction(.init("계속할래요", style: .primary) {
+                // TODO: Logic
+            })
+            .present(from: self)
+    }
+    
+    private func showFailAlert() {
+        let imageView = UIImageView(image: .kkodle0)
+        imageView.contentMode = .scaleAspectFit
+        imageView.heightAnchor.constraint(equalToConstant: 120).isActive = true
+        
+        KoodleAlert.Builder()
+            .setTitle(self.viewModel.rawAnswer)
+            .setMessage("텅 - 다시 한번 해볼까요?")
+            .addCustomView(imageView)
+            .addAction(.init("새로 시작", style: .secondary) {
+                self.dismiss(animated: true) {
+                    self.viewModel.resetGame()
+                    self.renderTiles()
+                }
+            })
+            .present(from: self)
+    }
+    
+    @objc private func bapTapped() {
+        // TODO: Logic
+    }
+}
+
+extension GameViewController {
+    func showToast(message: String, duration: TimeInterval = 2.0) {
+        let toastLabel = UILabel().then {
+            $0.text = message
+            $0.textColor = .gray_0
+            $0.textAlignment = .center
+            $0.font = .systemFont(ofSize: 14)
+            $0.backgroundColor = .gray_3
+            $0.numberOfLines = 0
+            $0.alpha = 0
+            $0.layer.cornerRadius = 18
+            $0.layer.masksToBounds = true
         }
         
-        alert.addAction(UIAlertAction(title: "다시 시작", style: .default) { _ in
-            self.viewModel.resetGame()
-            self.renderTiles()
-        })
+        guard let topVC = self.topViewController() else { return }
+        topVC.view.addSubview(toastLabel)
         
-        present(alert, animated: true)
+        toastLabel.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(32)
+            make.centerX.equalToSuperview()
+            make.height.greaterThanOrEqualTo(36)
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-60)
+        }
+        
+        // 애니메이션: 페이드 인 → 잠시 유지 → 페이드 아웃
+        UIView.animate(withDuration: 0.3, animations: {
+            toastLabel.alpha = 1
+        }) { _ in
+            UIView.animate(withDuration: 0.3, delay: duration, options: .curveEaseOut, animations: {
+                toastLabel.alpha = 0
+            }) { _ in
+                toastLabel.removeFromSuperview()
+            }
+        }
+    }
+    
+    func topViewController(base: UIViewController? = UIApplication.shared.connectedScenes
+            .compactMap { ($0 as? UIWindowScene)?.keyWindow }
+            .first?.rootViewController) -> UIViewController? {
+        
+        if let nav = base as? UINavigationController {
+            return topViewController(base: nav.visibleViewController)
+        }
+        if let tab = base as? UITabBarController {
+            return topViewController(base: tab.selectedViewController)
+        }
+        if let presented = base?.presentedViewController {
+            return topViewController(base: presented)
+        }
+        return base
     }
 }

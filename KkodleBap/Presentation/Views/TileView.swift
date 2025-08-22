@@ -33,12 +33,17 @@ class TileView: UIView {
             backgroundColor = color.backgroundColor
         }
     }
+    
+    private let size: CGFloat
 
-    init(character: String = "", color: TileColor = .gray) {
+    init(character: String = "", color: TileColor = .gray, size: CGFloat = 44) {
+        self.size = size
+        
         super.init(frame: .zero)
+        
         self.label.text = character
         self.color = color
-        setupView()
+        self.setupView()
     }
 
     required init?(coder: NSCoder) {
@@ -55,7 +60,7 @@ class TileView: UIView {
         }
 
         snp.makeConstraints { make in
-            make.width.height.equalTo(44)
+            make.width.height.equalTo(size)
         }
     }
 

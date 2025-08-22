@@ -28,7 +28,7 @@ class SplashViewController: UIViewController {
     private let subtitleLabel = UILabel().then {
         $0.text = "한글 자모 맞추기 게임"
         $0.font = .systemFont(ofSize: 16, weight: .medium)
-        $0.textColor = .systemGray2
+        $0.textColor = .gray_3
         $0.textAlignment = .center
         $0.alpha = 0
     }
