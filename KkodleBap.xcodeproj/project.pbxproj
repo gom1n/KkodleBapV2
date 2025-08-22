@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		236EE1782E44EEEE005B52D5 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 236EE1772E44EEEE005B52D5 /* SnapKit */; };
+		237DBB4E2E58B286000BF5BF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 237DBB4D2E58B286000BF5BF /* FirebaseAnalytics */; };
 		23A662F52E44EBCD006D8499 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 23A662F42E44EBCD006D8499 /* Then */; };
 /* End PBXBuildFile section */
 
@@ -43,6 +44,7 @@
 			files = (
 				23A662F52E44EBCD006D8499 /* Then in Frameworks */,
 				236EE1782E44EEEE005B52D5 /* SnapKit in Frameworks */,
+				237DBB4E2E58B286000BF5BF /* FirebaseAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +89,7 @@
 			packageProductDependencies = (
 				23A662F42E44EBCD006D8499 /* Then */,
 				236EE1772E44EEEE005B52D5 /* SnapKit */,
+				237DBB4D2E58B286000BF5BF /* FirebaseAnalytics */,
 			);
 			productName = KkodleBap;
 			productReference = 23A662D62E44EB45006D8499 /* KkodleBap.app */;
@@ -119,6 +122,7 @@
 			packageReferences = (
 				23A662F32E44EBCD006D8499 /* XCRemoteSwiftPackageReference "Then" */,
 				236EE1762E44EEEE005B52D5 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				237DBB4C2E58B286000BF5BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 23A662D72E44EB45006D8499 /* Products */;
@@ -362,6 +366,14 @@
 				minimumVersion = 5.7.1;
 			};
 		};
+		237DBB4C2E58B286000BF5BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.1.0;
+			};
+		};
 		23A662F32E44EBCD006D8499 /* XCRemoteSwiftPackageReference "Then" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/devxoul/Then";
@@ -377,6 +389,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 236EE1762E44EEEE005B52D5 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		237DBB4D2E58B286000BF5BF /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 237DBB4C2E58B286000BF5BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
 		};
 		23A662F42E44EBCD006D8499 /* Then */ = {
 			isa = XCSwiftPackageProductDependency;
