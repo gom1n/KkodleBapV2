@@ -10,13 +10,14 @@ import SnapKit
 import Then
 
 enum TileColor {
-    case gray, lightBlue, blue
+    case `default`, lightBlue, blue, bonus
 
     var backgroundColor: UIColor {
         switch self {
-        case .gray: return .blue_1
+        case .default: return .blue_1
         case .lightBlue: return .blue_4
         case .blue: return .blue_5
+        case .bonus: return .systemYellow
         }
     }
 }
@@ -28,7 +29,7 @@ class TileView: UIView {
         $0.textColor = .label
     }
 
-    private var color: TileColor = .gray {
+    private var color: TileColor = .default {
         didSet {
             backgroundColor = color.backgroundColor
         }
@@ -36,13 +37,13 @@ class TileView: UIView {
     
     private let size: CGFloat
 
-    init(character: String = "", color: TileColor = .gray, size: CGFloat = 44) {
+    init(character: String = "", color: TileColor = .default, size: CGFloat = 44, isBonus: Bool = false) {
         self.size = size
         
         super.init(frame: .zero)
         
         self.label.text = character
-        self.color = color
+        self.color = color == .default ? (isBonus ? TileColor.bonus : color) : color
         self.setupView()
     }
 
@@ -64,7 +65,7 @@ class TileView: UIView {
         }
     }
 
-    func configure(character: String, color: TileColor = .gray) {
+    func configure(character: String, color: TileColor = .default) {
         label.text = character
         self.color = color
     }

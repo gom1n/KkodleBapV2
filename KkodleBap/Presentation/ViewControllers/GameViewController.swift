@@ -40,6 +40,11 @@ class GameViewController: UIViewController {
         $0.textAlignment = .center
     }
     
+    private let scrollView = UIScrollView().then {
+        $0.showsVerticalScrollIndicator = false
+        $0.showsHorizontalScrollIndicator = false
+    }
+    
     private let tileContainer = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 8
@@ -73,7 +78,8 @@ class GameViewController: UIViewController {
         view.addSubview(bapContainer)
         bapContainer.addSubview(bapImage)
         bapContainer.addSubview(bapCount)
-        view.addSubview(tileContainer)
+        scrollView.addSubview(tileContainer)
+        view.addSubview(scrollView)
         view.addSubview(errorLabel)
         view.addSubview(keyboardView)
         
@@ -89,7 +95,7 @@ class GameViewController: UIViewController {
         
         bapContainer.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(4)
-            make.trailing.equalToSuperview().offset(-30)
+            make.trailing.equalToSuperview().offset(-20)
         }
         
         bapImage.snp.makeConstraints {
@@ -102,18 +108,23 @@ class GameViewController: UIViewController {
             make.leading.equalTo(bapImage.snp.trailing).offset(4)
         }
         
-        tileContainer.snp.makeConstraints {
+        scrollView.snp.makeConstraints {
             $0.top.equalTo(subtitleLabel.snp.bottom).offset(30)
             $0.leading.trailing.equalToSuperview().inset(45)
+            $0.bottom.equalTo(keyboardView.snp.top).offset(-60)
+        }
+        
+        tileContainer.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalTo(scrollView.snp.width)
         }
         
         errorLabel.snp.makeConstraints {
-            $0.top.equalTo(tileContainer.snp.bottom).offset(16)
+            $0.top.equalTo(scrollView.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
         
         keyboardView.snp.makeConstraints {
-            $0.top.greaterThanOrEqualTo(tileContainer.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-24)
         }
@@ -140,7 +151,7 @@ class GameViewController: UIViewController {
         }
     }
     
-    private func renderTiles() {
+    private func renderTiles(completion: (() -> Void)? = nil) {
         tileContainer.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         let answerCount = viewModel.ANSWER_COUNT
@@ -148,7 +159,7 @@ class GameViewController: UIViewController {
         let tileContainerSize: CGFloat = (screenWidth - 45 * 2) - (CGFloat(answerCount - 1) * 8)
         let tileSize: CGFloat = tileContainerSize / CGFloat(answerCount)
         
-        for row in 0..<answerCount {
+        for row in 0..<viewModel.MAX_ATTEMPTS {
             let hStack = UIStackView().then {
                 $0.axis = .horizontal
                 $0.spacing = 8
@@ -156,26 +167,28 @@ class GameViewController: UIViewController {
                 $0.alignment = .center
             }
             
+            let isBonus = row >= viewModel.BASE_MAX_ATTEMPTS
             if row < viewModel.attempts.count {
                 let tiles = viewModel.attempts[row]
                 for tile in tiles {
-                    let view = TileView(character: tile.character, color: tile.color, size: tileSize)
+                    let view = TileView(character: tile.character, color: tile.color, size: tileSize, isBonus: isBonus)
                     hStack.addArrangedSubview(view)
                 }
             } else if row == viewModel.attempts.count {
                 for i in 0..<answerCount {
                     let character = viewModel.currentInput.indices.contains(i) ? viewModel.currentInput[i] : ""
-                    let view = TileView(character: character, size: tileSize)
+                    let view = TileView(character: character, size: tileSize, isBonus: isBonus)
                     hStack.addArrangedSubview(view)
                 }
             } else {
                 for _ in 0..<answerCount {
-                    let view = TileView(size: tileSize)
+                    let view = TileView(size: tileSize, isBonus: isBonus)
                     hStack.addArrangedSubview(view)
                 }
             }
             
             tileContainer.addArrangedSubview(hStack)
+            completion?()
         }
         
         if let error = viewModel.errorMessage {
@@ -233,6 +246,14 @@ class GameViewController: UIViewController {
             })
             .addAction(.init("계속할래요", style: .primary) {
                 // TODO: Logic
+                
+                self.dismiss(animated: true)
+                self.viewModel.grantOneMoreChanceIfPossible()
+                self.renderTiles()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                    self?.scrollView.scrollToBottom()
+                }
+                
             })
             .present(from: self)
     }
@@ -310,5 +331,15 @@ extension GameViewController {
             return topViewController(base: presented)
         }
         return base
+    }
+}
+
+extension UIScrollView {
+    func scrollToBottom(animated: Bool = true) {
+        let bottomOffset = CGPoint(
+            x: 0,
+            y: max(0, contentSize.height - bounds.size.height + adjustedContentInset.bottom)
+        )
+        setContentOffset(bottomOffset, animated: animated)
     }
 }

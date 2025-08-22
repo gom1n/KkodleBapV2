@@ -12,7 +12,7 @@ import SwiftUI
 struct JamoTile: Identifiable, Hashable {
     let id = UUID()
     let character: String
-    var color: TileColor = .gray
+    var color: TileColor = .default
 }
 
 class GameViewModel: ObservableObject {
@@ -23,11 +23,15 @@ class GameViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var keyboardColors: [String: TileColor] = [:]
 
+    // 정답의 자모음 개수
     public var ANSWER_COUNT: Int = 6
-    
     public var rawAnswer: String = ""
     public var answer: [String] = []
-    private let maxAttempts = 6
+    
+    // 게임 최대 횟수
+    public let BASE_MAX_ATTEMPTS = 6
+    private var BONUS_ATTEMPTS = 0
+    public var MAX_ATTEMPTS: Int { BASE_MAX_ATTEMPTS + BONUS_ATTEMPTS }
     
     private let validWordList: [String]
     private let decomposedWordList: [[String]]
@@ -63,13 +67,14 @@ class GameViewModel: ObservableObject {
         errorMessage = nil
         keyboardColors = [:]
         answer = []
+        BONUS_ATTEMPTS = 0
 
-        while answer.count != 6 {
+        while answer.count != ANSWER_COUNT {
             var rng = SystemRandomNumberGenerator()
             rawAnswer = answerPool.randomElement(using: &rng) ?? ""
             let decomposed = Jamo.decompose(rawAnswer).map { String($0) }
             
-            if decomposed.count == 6 {
+            if decomposed.count == ANSWER_COUNT {
                 answer = decomposed
                 break
             }
@@ -81,7 +86,7 @@ class GameViewModel: ObservableObject {
     func addJamo(_ jamo: String) {
         errorMessage = nil
         guard !isGameOver else { return }
-        guard currentInput.count < 6 else { return }
+        guard currentInput.count < ANSWER_COUNT else { return }
         currentInput.append(jamo)
     }
 
@@ -93,8 +98,8 @@ class GameViewModel: ObservableObject {
     }
 
     func submit() {
-        guard currentInput.count == 6 else {
-            errorMessage = "자모 6개를 입력해주세요!"
+        guard currentInput.count == ANSWER_COUNT else {
+            errorMessage = "자모 \(ANSWER_COUNT)개를 입력해주세요!"
             return
         }
 
@@ -120,8 +125,8 @@ class GameViewModel: ObservableObject {
                 continue
             case (_, .lightBlue):
                 keyboardColors[tile.character] = .lightBlue
-            case (nil, .gray):
-                keyboardColors[tile.character] = .gray
+            case (nil, .default):
+                keyboardColors[tile.character] = .default
             default:
                 continue
             }
@@ -132,10 +137,16 @@ class GameViewModel: ObservableObject {
         if result.allSatisfy({ $0.color == .blue }) {
             isGameOver = true
             didWin = true
-        } else if attempts.count >= maxAttempts {
+        } else if attempts.count >= MAX_ATTEMPTS {
             isGameOver = true
             didWin = false
         }
+    }
+    
+    func grantOneMoreChanceIfPossible() -> Bool {
+        BONUS_ATTEMPTS += 1
+        isGameOver = false   // 방금 실패 상태를 되돌리고 계속 진행
+        return true
     }
 
     private func compare(input: [String], answer: [String]) -> [JamoTile] {
@@ -148,12 +159,12 @@ class GameViewModel: ObservableObject {
                 result.append(JamoTile(character: inputChar, color: .blue))
                 remainingAnswer[i] = "✓" // mark used
             } else {
-                result.append(JamoTile(character: inputChar, color: .gray))
+                result.append(JamoTile(character: inputChar, color: .default))
             }
         }
 
         for i in 0..<input.count {
-            if result[i].color == .gray, let idx = remainingAnswer.firstIndex(of: input[i]) {
+            if result[i].color == .default, let idx = remainingAnswer.firstIndex(of: input[i]) {
                 result[i].color = .lightBlue
                 remainingAnswer[idx] = "✓"
             }
@@ -209,8 +220,10 @@ extension GameViewModel {
                     result += "💙"
                 case .lightBlue:
                     result += "🩵"
-                case .gray:
+                case .default:
                     result += "🤍"
+                case .bonus:
+                    result += "💛"
                 }
             }
             result += "\n"

@@ -113,9 +113,11 @@ class KeyboardView: UIView {
                 case .lightBlue:
                     button.backgroundColor = .blue_4
                     button.setTitleColor(.white, for: .normal)
-                case .gray:
+                case .default:
                     button.backgroundColor = .gray_2
                     button.setTitleColor(.label, for: .normal)
+                default:
+                    break
                 }
             } else {
                 // 기본값
