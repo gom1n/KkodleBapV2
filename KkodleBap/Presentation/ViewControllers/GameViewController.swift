@@ -45,6 +45,11 @@ class GameViewController: UIViewController {
         $0.setTitleColor(.black, for: .normal)
     }
     
+    private let historyButton = UIButton().then {
+        $0.setTitle("히스토리 보기", for: .normal)
+        $0.setTitleColor(.black, for: .normal)
+    }
+    
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
         $0.showsHorizontalScrollIndicator = false
@@ -86,6 +91,7 @@ class GameViewController: UIViewController {
         view.addSubview(subtitleLabel)
         view.addSubview(bapContainer)
         view.addSubview(mapButton)
+        view.addSubview(historyButton)
         bapContainer.addSubview(bapImage)
         bapContainer.addSubview(bapCount)
         scrollView.addSubview(tileContainer)
@@ -123,6 +129,11 @@ class GameViewController: UIViewController {
             make.leading.equalToSuperview().offset(20)
         }
         
+        historyButton.snp.makeConstraints { make in
+            make.top.equalTo(mapButton.snp.bottom).offset(8)
+            make.leading.equalToSuperview().offset(20)
+        }
+        
         scrollView.snp.makeConstraints {
             $0.top.equalTo(subtitleLabel.snp.bottom).offset(30)
             $0.leading.trailing.equalToSuperview().inset(45)
@@ -148,6 +159,7 @@ class GameViewController: UIViewController {
         bapContainer.addGestureRecognizer(tapGesture)
         
         mapButton.addTarget(self, action: #selector(moveToMap), for: .touchUpInside)
+        historyButton.addTarget(self, action: #selector(moveToHistory), for: .touchUpInside)
     }
     
     private func setupKeyboardCallbacks() {
@@ -229,6 +241,11 @@ class GameViewController: UIViewController {
     }
     
     private func showSuccessAlert() {
+        // 기기에 히스토리 저장
+        let resultImage = self.tileContainer.captureAsImage()
+        let imagePath = self.saveImage(resultImage, fileName: UUID().uuidString)
+        HistoryStore.add(HistoryEntry(answer: viewModel.rawAnswer, didWin: viewModel.didWin, imagePath: imagePath))
+        
         // TODO: 성공 image
         
         KoodleAlert.Builder()
@@ -257,6 +274,7 @@ class GameViewController: UIViewController {
             .setMessage("꼬들밥 한 그릇으로 기회를 한 번 더 얻을 수 있습니다.")
             .addCustomView(imageView)
             .addAction(.init("그만할래요", style: .secondary) {
+                // 새로 시작
                 self.dismiss(animated: false) {
                     self.showFailAlert()
                 }
@@ -276,6 +294,12 @@ class GameViewController: UIViewController {
     }
     
     private func showFailAlert() {
+        // 기기에 히스토리 저장
+        let resultImage = self.tileContainer.captureAsImage()
+        let imagePath = self.saveImage(resultImage, fileName: UUID().uuidString)
+        HistoryStore.add(HistoryEntry(answer: viewModel.rawAnswer, didWin: viewModel.didWin, imagePath: imagePath))
+        
+        // 알럿창
         let imageView = UIImageView(image: .kkodle0)
         imageView.contentMode = .scaleAspectFit
         imageView.heightAnchor.constraint(equalToConstant: 120).isActive = true
@@ -312,6 +336,15 @@ class GameViewController: UIViewController {
             self?.renderTiles()
         }
         self.navigationController?.pushViewController(mapVC, animated: true)
+    }
+    
+    @objc private func moveToHistory() {
+        // 진동
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+        
+        let vc = HistoryViewController()
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
@@ -366,6 +399,20 @@ extension GameViewController {
         }
         return base
     }
+    
+    func saveImage(_ image: UIImage, fileName: String) -> String? {
+        guard let data = image.pngData() else { return nil }
+        let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("\(fileName).png")
+
+        do {
+            try data.write(to: url)
+            return url.path
+        } catch {
+            print("❌ 이미지 저장 실패:", error)
+            return nil
+        }
+    }
 }
 
 extension UIScrollView {
@@ -375,5 +422,14 @@ extension UIScrollView {
             y: max(0, contentSize.height - bounds.size.height + adjustedContentInset.bottom)
         )
         setContentOffset(bottomOffset, animated: animated)
+    }
+}
+
+extension UIView {
+    func captureAsImage() -> UIImage {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { ctx in
+            layer.render(in: ctx.cgContext)
+        }
     }
 }
