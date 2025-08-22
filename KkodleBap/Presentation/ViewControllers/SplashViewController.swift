@@ -38,7 +38,18 @@ class SplashViewController: UIViewController {
         view.backgroundColor = .blue_2
         
         setupViews()
-        animateViews()
+        checkAppVersionAndAnimate()
+    }
+    
+    /// 앱 버전 체크
+    @MainActor
+    private func checkAppVersionAndAnimate() {
+        Task {
+            let manager = UpdateManager()
+            await manager.checkAndPresentIfNeeded(from: self)
+            
+            animateViews()
+        }
     }
 
     private func setupViews() {
