@@ -95,7 +95,7 @@ class KeyboardView: UIView {
         return UIButton(type: .system).then {
             let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
             $0.setImage(UIImage(systemName: icon, withConfiguration: config), for: .normal)
-            $0.backgroundColor = UIColor.systemGray4
+            $0.backgroundColor = .clear
             $0.tintColor = .label
             $0.layer.cornerRadius = 6
         }
@@ -130,15 +130,24 @@ class KeyboardView: UIView {
     // MARK: Actions
 
     @objc private func jamoTapped(_ sender: UIButton) {
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+        
         guard let jamo = sender.titleLabel?.text else { return }
         onJamoTapped?(jamo)
     }
 
     @objc private func deleteTapped() {
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+        
         onDeleteTapped?()
     }
 
     @objc private func submitTapped() {
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+        
         onSubmitTapped?()
     }
 }

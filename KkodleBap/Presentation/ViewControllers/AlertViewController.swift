@@ -173,12 +173,12 @@ public final class KoodleAlertViewController: UIViewController {
     }
 
     @objc private func tapButton(_ sender: UIButton) {
-        // 어떤 버튼인지 찾기
+        // 진동
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+        
         if let action = actions.first(where: { actionHash($0) == sender.tag }) {
-//            dismiss(animated: true) { action.handler?() }
             action.handler?()
-        } else {
-//            dismiss(animated: true, completion: nil)
         }
     }
 

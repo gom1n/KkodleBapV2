@@ -277,6 +277,10 @@ class GameViewController: UIViewController {
     }
     
     @objc private func bapTapped() {
+        // 진동
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+        
         // TODO: Logic
     }
 }
