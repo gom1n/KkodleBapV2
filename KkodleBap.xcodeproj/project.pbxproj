@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2354147A2E5A0A9300682F6B /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 235414792E5A0A9300682F6B /* GoogleMobileAds */; };
 		236EE1782E44EEEE005B52D5 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 236EE1772E44EEEE005B52D5 /* SnapKit */; };
 		237DBB4E2E58B286000BF5BF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 237DBB4D2E58B286000BF5BF /* FirebaseAnalytics */; };
 		23A662F52E44EBCD006D8499 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 23A662F42E44EBCD006D8499 /* Then */; };
@@ -42,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2354147A2E5A0A9300682F6B /* GoogleMobileAds in Frameworks */,
 				23A662F52E44EBCD006D8499 /* Then in Frameworks */,
 				236EE1782E44EEEE005B52D5 /* SnapKit in Frameworks */,
 				237DBB4E2E58B286000BF5BF /* FirebaseAnalytics in Frameworks */,
@@ -90,6 +92,7 @@
 				23A662F42E44EBCD006D8499 /* Then */,
 				236EE1772E44EEEE005B52D5 /* SnapKit */,
 				237DBB4D2E58B286000BF5BF /* FirebaseAnalytics */,
+				235414792E5A0A9300682F6B /* GoogleMobileAds */,
 			);
 			productName = KkodleBap;
 			productReference = 23A662D62E44EB45006D8499 /* KkodleBap.app */;
@@ -123,6 +126,7 @@
 				23A662F32E44EBCD006D8499 /* XCRemoteSwiftPackageReference "Then" */,
 				236EE1762E44EEEE005B52D5 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				237DBB4C2E58B286000BF5BF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				235414782E5A0A9300682F6B /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 23A662D72E44EB45006D8499 /* Products */;
@@ -166,6 +170,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = KkodleBap/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "꼬들밥";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "추적 허용";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -176,6 +181,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.0;
+				OTHER_LDFLAGS = "-Objc";
 				PRODUCT_BUNDLE_IDENTIFIER = gomin.KkodleGame;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -195,6 +201,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = KkodleBap/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "꼬들밥";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "추적 허용";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -205,6 +212,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0.0;
+				OTHER_LDFLAGS = "-Objc";
 				PRODUCT_BUNDLE_IDENTIFIER = gomin.KkodleGame;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -358,6 +366,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		235414782E5A0A9300682F6B /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.9.0;
+			};
+		};
 		236EE1762E44EEEE005B52D5 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -385,6 +401,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		235414792E5A0A9300682F6B /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 235414782E5A0A9300682F6B /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
 		236EE1772E44EEEE005B52D5 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 236EE1762E44EEEE005B52D5 /* XCRemoteSwiftPackageReference "SnapKit" */;

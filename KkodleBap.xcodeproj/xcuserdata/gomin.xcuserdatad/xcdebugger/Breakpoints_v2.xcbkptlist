@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "6F0829F6-9F40-4E5E-B6CA-FCEDB8ABA112"
-            shouldBeEnabled = "No"
+            uuid = "91593FDF-A5E9-4B79-902B-D73FDF50C99D"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "KkodleBap/Presentation/Utils/UpdateManager.swift"
+            filePath = "KkodleBap/Presentation/ViewControllers/GameViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "53"
-            endingLineNumber = "53"
-            landmarkName = "openStore(_:)"
+            startingLineNumber = "354"
+            endingLineNumber = "354"
+            landmarkName = "bapTapped()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import Then
+import Combine
 
 class GameViewController: UIViewController {
     private let titleLabel = UILabel().then {
@@ -34,7 +35,7 @@ class GameViewController: UIViewController {
     }
     
     private let bapCount = UILabel().then {
-        $0.text = "1"
+        $0.text = String(UserManager.bap)
         $0.textColor = .black
         $0.font = .systemFont(ofSize: 28, weight: .bold)
         $0.textAlignment = .center
@@ -71,12 +72,14 @@ class GameViewController: UIViewController {
     
     private let keyboardView = KeyboardView()
     private let viewModel = GameViewModel()
+    private var cancellables = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .gray_0
         
         setupLayout()
+        setupBindings()
         setupKeyboardCallbacks()
         renderTiles()
     }
@@ -160,6 +163,15 @@ class GameViewController: UIViewController {
         
         mapButton.addTarget(self, action: #selector(moveToMap), for: .touchUpInside)
         historyButton.addTarget(self, action: #selector(moveToHistory), for: .touchUpInside)
+    }
+    
+    private func setupBindings() {
+        UserManager.$bap
+            .receive(on: RunLoop.main)
+            .sink { [weak self] value in
+                self?.bapCount.text = String(value)
+            }
+            .store(in: &cancellables)
     }
     
     private func setupKeyboardCallbacks() {
@@ -323,6 +335,33 @@ class GameViewController: UIViewController {
         generator.impactOccurred()
         
         // TODO: Logic
+        let adVC = AdMobViewController()
+        adVC.rewardAction = { [weak self] success in
+            guard let self = self else { return }
+            if success {
+                UserManager.bap += 1
+                
+                KoodleAlert.Builder()
+                    .setTitle("꼬들밥 한 그릇을 얻었습니다!")
+                    .setMessage("..")
+                    .addAction(.init("확인", style: .primary) {
+                        self.dismiss(animated: true)
+                    })
+                    .present(from: self)
+                
+            } else {
+                KoodleAlert.Builder()
+                    .setTitle("광고 시청에 실패했습니다.")
+                    .setMessage("다시 시도해주세요.")
+                    .addAction(.init("확인", style: .primary) {
+                        self.dismiss(animated: true)
+                    })
+                    .present(from: self)
+            }
+        }
+        let navi = UINavigationController(rootViewController: adVC)
+        navi.modalPresentationStyle = .fullScreen
+        self.present(navi, animated: true)
     }
     
     @objc private func moveToMap() {
