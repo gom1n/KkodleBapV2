@@ -42,13 +42,17 @@ struct HistoryEntry: Codable, Equatable, Identifiable {
     let answer: String
     let didWin: Bool
     let imagePath: String?
+    let tryCount: Int
+    let resultCopyString: String?
 
-    init(id: UUID = UUID(), timestamp: Date = Date(), answer: String, didWin: Bool, imagePath: String?) {
+    init(id: UUID = UUID(), timestamp: Date = Date(), answer: String, didWin: Bool, imagePath: String?, tryCount: Int, resultCopyString: String?) {
         self.id = id
         self.timestamp = timestamp
         self.answer = answer
         self.didWin = didWin
         self.imagePath = imagePath
+        self.tryCount = tryCount
+        self.resultCopyString = resultCopyString
     }
 }
 
@@ -140,11 +144,16 @@ final class HistoryViewController: UIViewController {
 
     private func configureTableView() {
         view.addSubview(tableView)
-        tableView.snp.makeConstraints { $0.edges.equalTo(view.safeAreaLayoutGuide) }
+        tableView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
+            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
 
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.rowHeight = 64
+        tableView.rowHeight = 72
+        tableView.backgroundColor = .gray_0
+        tableView.separatorInset = .zero
         tableView.register(HistoryCell.self, forCellReuseIdentifier: HistoryCell.reuseID)
     }
 
@@ -166,8 +175,28 @@ extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
         return sections[section].items.count
     }
 
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return dateHeaderFormatter.string(from: sections[section].date)
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let title = dateHeaderFormatter.string(from: sections[section].date)
+
+        let container = UIView()
+        container.backgroundColor = UIColor.systemGray6
+        container.layer.cornerRadius = 8
+
+        let label = UILabel()
+        label.text = title
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.textColor = .secondaryLabel
+
+        container.addSubview(label)
+        label.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(8)
+        }
+
+        return container
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 40
     }
 
     func tableView(_ tableView: UITableView,
@@ -182,6 +211,7 @@ extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
             answer: item.answer,
             didWin: item.didWin
         )
+        cell.selectionStyle = .none
         return cell
     }
     
@@ -191,7 +221,7 @@ extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
 
         if let path = record.imagePath,
            let image = UIImage(contentsOfFile: path) {
-            let detailVC = HistoryDetailViewController(image: image)
+            let detailVC = HistoryDetailViewController(item: record, image: image)
             detailVC.modalPresentationStyle = .fullScreen
             self.present(detailVC, animated: true)
         } else {

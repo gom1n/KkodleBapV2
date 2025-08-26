@@ -6,8 +6,7 @@
 //
 
 import Foundation
-import SwiftUI
-
+import UIKit
 
 struct JamoTile: Identifiable, Hashable {
     let id = UUID()
@@ -209,11 +208,15 @@ class GameViewModel: ObservableObject {
     }
 }
 
-import UIKit
-
 extension GameViewModel {
-    func copyResultToClipboard() {
-        var result = "🍚꼬들밥🍚 \(attempts.count)회 만에 성공!✨\n\n"
+    func copyResultToClipboard(_ success: Bool = true) -> String {
+        var result = ""
+        
+        if success {
+            result = "🍚꼬들밥🍚 \(attempts.count)회 만에 성공!✨\n\n"
+        } else {
+            result = "🍚꼬들밥🍚 \(attempts.count)회 시도✨\n\n"
+        }
 
         for attempt in attempts {
             for tile in attempt {
@@ -238,6 +241,7 @@ extension GameViewModel {
 
         let dateString = formatter.string(from: Date())
         result += "\n\(dateString)"
-        UIPasteboard.general.string = result
+        
+        return result
     }
 }

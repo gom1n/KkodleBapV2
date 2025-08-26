@@ -25,7 +25,7 @@ final class HistoryCell: UITableViewCell {
     private let badge = UILabel().then {
         $0.font = .systemFont(ofSize: 12, weight: .bold)
         $0.textAlignment = .center
-        $0.textColor = .white
+        $0.textColor = .gray_0
         $0.layer.cornerRadius = 10
         $0.layer.masksToBounds = true
         $0.setContentHuggingPriority(.required, for: .horizontal)
@@ -44,6 +44,8 @@ final class HistoryCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        contentView.backgroundColor = .gray_0
 
         vStack.addArrangedSubview(answerLabel)
         vStack.addArrangedSubview(timeLabel)
@@ -52,15 +54,17 @@ final class HistoryCell: UITableViewCell {
         hStack.addArrangedSubview(badge)
 
         contentView.addSubview(hStack)
-        hStack.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            hStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            hStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
-            hStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            hStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            badge.widthAnchor.constraint(greaterThanOrEqualToConstant: 64),
-            badge.heightAnchor.constraint(equalToConstant: 20)
-        ])
+        
+        hStack.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview().inset(10)
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
+        
+        badge.snp.makeConstraints { make in
+            make.width.equalTo(64)
+            make.height.equalTo(20)
+        }
+        
         accessoryType = .disclosureIndicator // 필요 없으면 지워도 됨
     }
 

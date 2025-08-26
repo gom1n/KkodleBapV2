@@ -256,7 +256,11 @@ class GameViewController: UIViewController {
         // 기기에 히스토리 저장
         let resultImage = self.tileContainer.captureAsImage()
         let imagePath = self.saveImage(resultImage, fileName: UUID().uuidString)
-        HistoryStore.add(HistoryEntry(answer: viewModel.rawAnswer, didWin: viewModel.didWin, imagePath: imagePath))
+        HistoryStore.add(HistoryEntry(answer: viewModel.rawAnswer,
+                                      didWin: viewModel.didWin,
+                                      imagePath: imagePath,
+                                      tryCount: viewModel.attempts.count,
+                                      resultCopyString: viewModel.copyResultToClipboard()))
         
         // TODO: 성공 image
         
@@ -264,7 +268,9 @@ class GameViewController: UIViewController {
             .setAnswerTitle(viewModel.rawAnswer)
             .setMessage("축하합니다!\n밥풀을 모은 꼬들이는 행복해요.")
             .addAction(.init("결과 복사하기", style: .secondary) {
-                self.viewModel.copyResultToClipboard()
+                let result = self.viewModel.copyResultToClipboard()
+                UIPasteboard.general.string = result
+                
                 self.showToast(message: "결과가 복사되었습니다.🍚")
             })
             .addAction(.init("새로 시작", style: .primary) {
@@ -319,7 +325,11 @@ class GameViewController: UIViewController {
         // 기기에 히스토리 저장
         let resultImage = self.tileContainer.captureAsImage()
         let imagePath = self.saveImage(resultImage, fileName: UUID().uuidString)
-        HistoryStore.add(HistoryEntry(answer: viewModel.rawAnswer, didWin: viewModel.didWin, imagePath: imagePath))
+        HistoryStore.add(HistoryEntry(answer: viewModel.rawAnswer,
+                                      didWin: viewModel.didWin,
+                                      imagePath: imagePath,
+                                      tryCount: viewModel.attempts.count,
+                                      resultCopyString: viewModel.copyResultToClipboard(false)))
         
         // 알럿창
         let imageView = UIImageView(image: .kkodle0)
@@ -397,7 +407,7 @@ class GameViewController: UIViewController {
     }
 }
 
-extension GameViewController {
+extension UIViewController {
     func showToast(message: String, duration: TimeInterval = 2.0) {
         let toastLabel = UILabel().then {
             $0.text = message
