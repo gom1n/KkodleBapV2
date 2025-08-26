@@ -12,44 +12,65 @@ public enum KoodleAlert {}
 
 public extension KoodleAlert {
     final class Builder {
-        private var title: String?
-        private var message: String?
-        private var customViews: [UIView] = []
-        private var actions: [KoodleAlertAction] = []
-
+        private let alert = KoodleAlertViewController()
+        
         public init() {}
 
+        /// 제목 설정
         @discardableResult
         public func setTitle(_ text: String?) -> Builder {
-            self.title = text; return self
+            alert.setTitle(text)
+            return self
         }
+        
+        /// 정답 제목 설정
+        @discardableResult
+        public func setAnswerTitle(_ answer: String) -> Builder {
+            alert.setAnswerTitle(answer)
+            return self
+        }
+        
+        /// 내용 설정
         @discardableResult
         public func setMessage(_ text: String?) -> Builder {
-            self.message = text; return self
+            alert.setMessage(text)
+            return self
         }
+        
         /// 스택뷰 안에 넣을 커스텀 뷰(예: 이미지, 텍스트필드 등)
         @discardableResult
         public func addCustomView(_ view: UIView) -> Builder {
-            self.customViews.append(view); return self
+            alert.addCustomView(view)
+            return self
         }
+        
+        /// 버튼 추가
         @discardableResult
         public func addAction(_ action: KoodleAlertAction) -> Builder {
-            guard actions.count < 2 else { return self } // 1~2개 제한
-            self.actions.append(action); return self
+            alert.addButton(action)
+            return self
+        }
+        
+        /// 버튼들 추가
+        @discardableResult
+        public func addActions(_ actions: [KoodleAlertAction]) -> Builder {
+            alert.addButtons(actions)
+            return self
         }
 
-        public func build() -> KoodleAlertViewController {
-            return KoodleAlertViewController(title: title,
-                                             message: message,
-                                             customViews: customViews,
-                                             actions: actions.isEmpty
-                                                ? [KoodleAlertAction("OK", style: .primary, handler: nil)]
-                                                : actions)
+        /// 생성
+        private func build() -> KoodleAlertViewController {
+            return alert
         }
 
-        public func present(from presenter: UIViewController, animated: Bool = true, completion: (() -> Void)? = nil) {
+        /// 노출
+        public func present(from presenter: UIViewController? = nil, animated: Bool = true, completion: (() -> Void)? = nil) {
             let vc = build()
-            presenter.present(vc, animated: animated, completion: completion)
+            if let presenter = presenter {
+                presenter.present(vc, animated: animated, completion: completion)
+            } else if let topVC = topViewController() {
+                topVC.present(vc, animated: animated, completion: completion)
+            }
         }
     }
 }

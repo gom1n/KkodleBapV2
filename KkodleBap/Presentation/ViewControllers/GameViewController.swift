@@ -84,8 +84,8 @@ class GameViewController: UIViewController {
         renderTiles()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         self.navigationController?.isNavigationBarHidden = true
     }
     
@@ -261,7 +261,7 @@ class GameViewController: UIViewController {
         // TODO: 성공 image
         
         KoodleAlert.Builder()
-            .setTitle(viewModel.rawAnswer)
+            .setAnswerTitle(viewModel.rawAnswer)
             .setMessage("축하합니다!\n밥풀을 모은 꼬들이는 행복해요.")
             .addAction(.init("결과 복사하기", style: .secondary) {
                 self.viewModel.copyResultToClipboard()
@@ -281,18 +281,21 @@ class GameViewController: UIViewController {
         imageView.contentMode = .scaleAspectFit
         imageView.heightAnchor.constraint(equalToConstant: 120).isActive = true
         
-        KoodleAlert.Builder()
-            .setTitle("이어서 더 도전해볼까요?")
-            .setMessage("꼬들밥 한 그릇으로 기회를 한 번 더 얻을 수 있습니다.")
-            .addCustomView(imageView)
-            .addAction(.init("그만할래요", style: .secondary) {
-                // 새로 시작
-                self.dismiss(animated: false) {
-                    self.showFailAlert()
-                }
-            })
-            .addAction(.init("계속할래요", style: .primary) {
+        let builder = KoodleAlert.Builder()
+                        .setTitle("이어서 더 도전해볼까요?")
+                        .setMessage("꼬들밥 한 그릇으로 기회를 한 번 더 얻을 수 있습니다.")
+                        .addCustomView(imageView)
+                        .addAction(.init("그만할래요", style: .secondary) {
+                            // 새로 시작
+                            self.dismiss(animated: false) {
+                                self.showFailAlert()
+                            }
+                        })
+        
+        if UserManager.bap > 0 {
+            builder.addAction(.init("계속할래요", style: .primary) {
                 // TODO: Logic
+                UserManager.bap -= 1
                 
                 self.dismiss(animated: true)
                 self.viewModel.grantOneMoreChanceIfPossible()
@@ -302,7 +305,14 @@ class GameViewController: UIViewController {
                 }
                 
             })
-            .present(from: self)
+        } else {
+            builder.addAction(.init("광고 보고\n계속 맞춰보기", style: .primary) {
+                // TODO: Logic
+                self.bapTapped()
+            })
+        }
+            
+        builder.present(from: self)
     }
     
     private func showFailAlert() {
@@ -317,7 +327,7 @@ class GameViewController: UIViewController {
         imageView.heightAnchor.constraint(equalToConstant: 120).isActive = true
         
         KoodleAlert.Builder()
-            .setTitle(self.viewModel.rawAnswer)
+            .setAnswerTitle(self.viewModel.rawAnswer)
             .setMessage("텅 - 다시 한번 해볼까요?")
             .addCustomView(imageView)
             .addAction(.init("새로 시작", style: .secondary) {
@@ -347,7 +357,7 @@ class GameViewController: UIViewController {
                     .addAction(.init("확인", style: .primary) {
                         self.dismiss(animated: true)
                     })
-                    .present(from: self)
+                    .present()
                 
             } else {
                 KoodleAlert.Builder()
@@ -356,12 +366,12 @@ class GameViewController: UIViewController {
                     .addAction(.init("확인", style: .primary) {
                         self.dismiss(animated: true)
                     })
-                    .present(from: self)
+                    .present()
             }
         }
         let navi = UINavigationController(rootViewController: adVC)
         navi.modalPresentationStyle = .fullScreen
-        self.present(navi, animated: true)
+        topViewController()?.present(navi, animated: true)
     }
     
     @objc private func moveToMap() {
@@ -401,7 +411,7 @@ extension GameViewController {
             $0.layer.masksToBounds = true
         }
         
-        guard let topVC = self.topViewController() else { return }
+        guard let topVC = topViewController() else { return }
         topVC.view.addSubview(toastLabel)
         
         toastLabel.snp.makeConstraints { make in
@@ -423,22 +433,6 @@ extension GameViewController {
         }
     }
     
-    func topViewController(base: UIViewController? = UIApplication.shared.connectedScenes
-            .compactMap { ($0 as? UIWindowScene)?.keyWindow }
-            .first?.rootViewController) -> UIViewController? {
-        
-        if let nav = base as? UINavigationController {
-            return topViewController(base: nav.visibleViewController)
-        }
-        if let tab = base as? UITabBarController {
-            return topViewController(base: tab.selectedViewController)
-        }
-        if let presented = base?.presentedViewController {
-            return topViewController(base: presented)
-        }
-        return base
-    }
-    
     func saveImage(_ image: UIImage, fileName: String) -> String? {
         guard let data = image.pngData() else { return nil }
         let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -452,6 +446,22 @@ extension GameViewController {
             return nil
         }
     }
+}
+
+func topViewController(base: UIViewController? = UIApplication.shared.connectedScenes
+        .compactMap { ($0 as? UIWindowScene)?.keyWindow }
+        .first?.rootViewController) -> UIViewController? {
+    
+    if let nav = base as? UINavigationController {
+        return topViewController(base: nav.visibleViewController)
+    }
+    if let tab = base as? UITabBarController {
+        return topViewController(base: tab.selectedViewController)
+    }
+    if let presented = base?.presentedViewController {
+        return topViewController(base: presented)
+    }
+    return base
 }
 
 extension UIScrollView {

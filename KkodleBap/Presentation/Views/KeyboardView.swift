@@ -20,10 +20,16 @@ class KeyboardView: UIView {
     var onJamoTapped: ((String) -> Void)?
     var onDeleteTapped: (() -> Void)?
     var onSubmitTapped: (() -> Void)?
+    
+    private var buttonWidthConstraints: [NSLayoutConstraint] = []
+    private let maxCols = 9
+    private let rowSpacing: CGFloat = 6
+    private let keyHeight: CGFloat = 50
 
     private var stackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 8
+        $0.alignment = .center
         $0.distribution = .fillEqually
     }
     
@@ -37,6 +43,21 @@ class KeyboardView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        // 화면 너비의 실제 가로 폭
+        let screenWidth = UIScreen.main.bounds.width - 16 * 2
+        // 같은 줄에서 최대 칸 수 기준으로 spacing 계산
+        let totalSpacing = CGFloat(maxCols - 1) * rowSpacing
+        let keyWidth = max(0, floor((screenWidth - totalSpacing) / CGFloat(maxCols)))
+
+        // 모든 버튼에 동일한 폭 적용
+        for c in buttonWidthConstraints {
+            c.constant = keyWidth
+        }
+    }
 
     private func setupViews() {
         addSubview(stackView)
@@ -45,9 +66,9 @@ class KeyboardView: UIView {
         for (i, row) in rows.enumerated() {
             let hStack = UIStackView().then {
                 $0.axis = .horizontal
-                $0.spacing = 6
-                $0.alignment = .fill
-                $0.distribution = .fillEqually
+                $0.spacing = rowSpacing
+                $0.alignment = .center
+                $0.distribution = .equalSpacing
             }
 
             if i == rows.count - 1 {
@@ -55,12 +76,21 @@ class KeyboardView: UIView {
                 let deleteButton = makeSystemButton(icon: "delete.left")
                 deleteButton.addTarget(self, action: #selector(deleteTapped), for: .touchUpInside)
                 hStack.addArrangedSubview(deleteButton)
+                
+                buttonWidthConstraints.append(deleteButton.widthAnchor.constraint(equalToConstant: 0))
+                buttonWidthConstraints.last?.isActive = true
+                deleteButton.heightAnchor.constraint(equalToConstant: keyHeight).isActive = true
             }
 
             for jamo in row {
                 let button = makeJamoButton(title: jamo)
                 button.addTarget(self, action: #selector(jamoTapped(_:)), for: .touchUpInside)
                 hStack.addArrangedSubview(button)
+                jamoButtons[jamo] = button
+                
+                buttonWidthConstraints.append(button.widthAnchor.constraint(equalToConstant: 0))
+                buttonWidthConstraints.last?.isActive = true
+                button.heightAnchor.constraint(equalToConstant: keyHeight).isActive = true
                 jamoButtons[jamo] = button
             }
 
@@ -71,6 +101,10 @@ class KeyboardView: UIView {
                 submitButton.tintColor = .gray_0
                 submitButton.addTarget(self, action: #selector(submitTapped), for: .touchUpInside)
                 hStack.addArrangedSubview(submitButton)
+                
+                buttonWidthConstraints.append(submitButton.widthAnchor.constraint(equalToConstant: 0))
+                buttonWidthConstraints.last?.isActive = true
+                submitButton.heightAnchor.constraint(equalToConstant: keyHeight).isActive = true
             }
 
             stackView.addArrangedSubview(hStack)
@@ -85,9 +119,7 @@ class KeyboardView: UIView {
                         $0.layer.cornerRadius = 6
                         $0.setTitleColor(.label, for: .normal)
                     }
-        button.snp.makeConstraints { make in
-            make.height.equalTo(50)
-        }
+        button.heightAnchor.constraint(equalToConstant: keyHeight).isActive = true
         return button
     }
 

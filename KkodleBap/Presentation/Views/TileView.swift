@@ -17,7 +17,7 @@ enum TileColor {
         case .default: return .blue_1
         case .lightBlue: return .blue_4
         case .blue: return .blue_5
-        case .bonus: return .systemYellow
+        case .bonus: return .yellow_1
         }
     }
 }

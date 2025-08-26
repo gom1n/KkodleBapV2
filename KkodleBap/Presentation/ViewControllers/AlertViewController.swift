@@ -48,23 +48,15 @@ public final class KoodleAlertViewController: UIViewController {
     private let buttonArea = UIStackView().then {
         $0.spacing = 8
         $0.distribution = .fillEqually
+        $0.axis = .horizontal
     }
     
     // Config
-    private let alertTitle: String?
-    private let message: String?
-    private let customViews: [UIView]
-    private let actions: [KoodleAlertAction]
+    private var actions: [KoodleAlertAction] = []
+    private var handlers: [Int: () -> Void] = [:]
 
     // Init
-    public init(title: String?,
-                message: String?,
-                customViews: [UIView] = [],
-                actions: [KoodleAlertAction]) {
-        self.alertTitle = title
-        self.message = message
-        self.customViews = customViews
-        self.actions = Array(actions.prefix(2)) // 1~2개만
+    public init() {
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .custom
         transitioningDelegate = self
@@ -76,6 +68,10 @@ public final class KoodleAlertViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .clear
         
+        self.setupViews()
+    }
+    
+    private func setupViews() {
         view.addSubview(dimView)
         view.addSubview(container)
         container.addSubview(vStack)
@@ -95,9 +91,11 @@ public final class KoodleAlertViewController: UIViewController {
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapOutside))
         dimView.addGestureRecognizer(tap)
-
+    }
+    
+    public func setTitle(_ title: String?) {
         // Title
-        if let title = alertTitle, !title.isEmpty {
+        if let title = title, !title.isEmpty {
             let titleLabel = UILabel().then {
                 $0.text = title
                 $0.font = .preferredFont(forTextStyle: .headline)
@@ -106,7 +104,19 @@ public final class KoodleAlertViewController: UIViewController {
             }
             vStack.addArrangedSubview(titleLabel)
         }
-
+    }
+    
+    public func setAnswerTitle(_ answer: String) {
+        let titleLabel = UILabel().then {
+            $0.text = "정답은 \(answer)입니다."
+            $0.font = .preferredFont(forTextStyle: .headline)
+            $0.numberOfLines = 0
+            $0.textAlignment = .center
+        }
+        vStack.addArrangedSubview(titleLabel)
+    }
+    
+    public func setMessage(_ message: String?) {
         // Message
         if let msg = message, !msg.isEmpty {
             let messageLabel = UILabel().then {
@@ -118,31 +128,51 @@ public final class KoodleAlertViewController: UIViewController {
             }
             vStack.addArrangedSubview(messageLabel)
         }
-
-        // Custom arranged subviews
-        for cv in customViews {
-            vStack.addArrangedSubview(cv)
-        }
-
-        // Buttons area
-        buttonArea.axis = (actions.count == 2) ? .horizontal : .vertical
-        // Buttons
-        vStack.addArrangedSubview(buttonArea)
-        for (_, action) in actions.enumerated() {
-            let btn = makeButton(for: action)
+    }
+    
+    public func addCustomView(_ customView: UIView) {
+        vStack.addArrangedSubview(customView)
+    }
+    
+    public func addButtons(_ actions: [KoodleAlertAction]) {
+        ensureButtonAreaInserted()
+        
+        for action in actions {
+            let idx = actions.count              // 고유 인덱스
+            self.actions.append(action)
+            let btn = makeButton(for: action, tag: idx)
+            handlers[idx] = action.handler ?? {} // nil이면 빈 클로저
             buttonArea.addArrangedSubview(btn)
         }
     }
+    
+    public func addButton(_ action: KoodleAlertAction) {
+        ensureButtonAreaInserted()
+        
+        let idx = actions.count
+        actions.append(action)
+        let btn = makeButton(for: action, tag: idx)
+        handlers[idx] = action.handler ?? {}
+        buttonArea.addArrangedSubview(btn)
+    }
+    
+    /// 버튼 영역 존재 여부 확인 뒤 추가
+    private func ensureButtonAreaInserted() {
+        if !vStack.arrangedSubviews.contains(buttonArea) {
+            vStack.addArrangedSubview(buttonArea)
+        }
+    }
 
-    private func makeButton(for action: KoodleAlertAction) -> UIButton {
+    private func makeButton(for action: KoodleAlertAction, tag: Int) -> UIButton {
         let btn = UIButton(type: .system)
         btn.setTitle(action.title, for: .normal)
         btn.titleLabel?.font = .preferredFont(forTextStyle: .headline)
+        btn.titleLabel?.numberOfLines = 0
         btn.layer.cornerRadius = 8
         btn.clipsToBounds = true
         btn.contentEdgeInsets = UIEdgeInsets(top: 14, left: 8, bottom: 14, right: 8)
-        btn.tag = actionHash(action)
         styleButton(btn, style: action.style)
+        btn.tag = tag
         btn.addTarget(self, action: #selector(tapButton(_:)), for: .touchUpInside)
         return btn
     }
@@ -173,12 +203,11 @@ public final class KoodleAlertViewController: UIViewController {
     }
 
     @objc private func tapButton(_ sender: UIButton) {
-        // 진동
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
-        
-        if let action = actions.first(where: { actionHash($0) == sender.tag }) {
-            action.handler?()
+
+        if let handler = handlers[sender.tag] {
+            handler()
         }
     }
 

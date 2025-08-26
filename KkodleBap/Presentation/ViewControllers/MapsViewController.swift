@@ -46,21 +46,19 @@ final class MapsViewController: UIViewController {
 
     private func configureCollectionView() {
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
+        layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 20
         layout.sectionInset = .zero
 
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .systemBackground
-        collectionView.isPagingEnabled = true
-        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.backgroundColor = .gray_0
+        collectionView.showsVerticalScrollIndicator = false
 
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.height.equalTo(150)
-            make.leading.equalToSuperview().offset(45)
-            make.trailing.equalToSuperview()
+            make.top.equalTo(self.view.safeAreaLayoutGuide).offset(45)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-20)
         }
 
         collectionView.register(MapCell.self, forCellWithReuseIdentifier: MapCell.reuseID)
@@ -85,7 +83,9 @@ extension MapsViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 150, height: 150)
+        let screenWidth = UIScreen.main.bounds.width
+        let cellSize = (screenWidth - 20 * 3) / 2
+        return CGSize(width: cellSize, height: cellSize)
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
