@@ -97,7 +97,7 @@ class KeyboardView: UIView {
             if i == rows.count - 1 {
                 // 확인 버튼
                 let submitButton = makeSystemButton(icon: "checkmark")
-                submitButton.backgroundColor = .blue_5
+                submitButton.backgroundColor = .blue_6
                 submitButton.tintColor = .gray_0
                 submitButton.addTarget(self, action: #selector(submitTapped), for: .touchUpInside)
                 hStack.addArrangedSubview(submitButton)
@@ -140,7 +140,7 @@ class KeyboardView: UIView {
             if let color = colors[jamo] {
                 switch color {
                 case .blue:
-                    button.backgroundColor = .blue_5
+                    button.backgroundColor = .blue_6
                     button.setTitleColor(.white, for: .normal)
                 case .lightBlue:
                     button.backgroundColor = .blue_4

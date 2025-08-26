@@ -107,9 +107,26 @@ public final class KoodleAlertViewController: UIViewController {
     }
     
     public func setAnswerTitle(_ answer: String) {
+        let prefix = "정답은 "
+        let suffix = "입니다."
+        let fullText = prefix + answer + suffix
+
+        let attributed = NSMutableAttributedString(
+            string: fullText,
+            attributes: [
+                .font: UIFont.preferredFont(forTextStyle: .headline),
+                .foregroundColor: UIColor.label
+            ]
+        )
+
+        // answer 부분의 정확한 범위 계산
+        let nsRange = NSRange(location: prefix.count, length: answer.count)
+        attributed.addAttributes([
+            .foregroundColor: UIColor.blue_5
+        ], range: nsRange)
+
         let titleLabel = UILabel().then {
-            $0.text = "정답은 \(answer)입니다."
-            $0.font = .preferredFont(forTextStyle: .headline)
+            $0.attributedText = attributed
             $0.numberOfLines = 0
             $0.textAlignment = .center
         }
@@ -180,15 +197,15 @@ public final class KoodleAlertViewController: UIViewController {
     private func styleButton(_ btn: UIButton, style: KoodleAlertAction.Style) {
         switch style {
         case .primary:
-            btn.backgroundColor = .blue_5
+            btn.backgroundColor = .blue_6
             btn.layer.borderColor = UIColor.clear.cgColor
             btn.layer.borderWidth = 0
             btn.setTitleColor(.gray_0, for: .normal)
         case .secondary:
             btn.backgroundColor = .gray_0
-            btn.layer.borderColor = UIColor.blue_5.cgColor
+            btn.layer.borderColor = UIColor.blue_6.cgColor
             btn.layer.borderWidth = 1
-            btn.setTitleColor(.blue_5, for: .normal)
+            btn.setTitleColor(.blue_6, for: .normal)
         case .destructive:
             btn.backgroundColor = .gray_1
             btn.layer.borderColor = UIColor.clear.cgColor

@@ -13,7 +13,8 @@ public extension UIColor{
     public static let blue_2 = UIColor(r: 193, g: 241, b: 252)
     public static let blue_3 = UIColor(r: 99, g: 216, b: 242)
     public static let blue_4 = UIColor(r: 165, g: 214, b: 234)
-    public static let blue_5 = UIColor(r: 80, g: 147, b: 247)
+    public static let blue_5 = UIColor(r: 97, g: 150, b: 247)
+    public static let blue_6 = UIColor(r: 80, g: 147, b: 247)
     // MARK: Gray
     public static let gray_0 = UIColor(r: 255, g: 255, b: 255)
     public static let gray_1 = UIColor(r: 231, g: 231, b: 236)
