@@ -130,7 +130,7 @@ final class HistoryViewController: UIViewController {
     // MARK: - UI
 
     private func configureNavigationBar() {
-        navigationItem.title = "과거 내역"
+        navigationItem.title = "히스토리"
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .close,
             target: self,

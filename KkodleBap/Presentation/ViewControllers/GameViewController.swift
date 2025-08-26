@@ -41,14 +41,10 @@ class GameViewController: UIViewController {
         $0.textAlignment = .center
     }
     
-    private let mapButton = UIButton().then {
-        $0.setTitle("맵 보기", for: .normal)
-        $0.setTitleColor(.black, for: .normal)
-    }
-    
-    private let historyButton = UIButton().then {
-        $0.setTitle("히스토리 보기", for: .normal)
-        $0.setTitleColor(.black, for: .normal)
+    private let menuButton = UIButton(type: .system).then {
+        let cfg = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
+        $0.setImage(UIImage(systemName: "line.3.horizontal", withConfiguration: cfg), for: .normal)
+        $0.tintColor = .black
     }
     
     private let scrollView = UIScrollView().then {
@@ -93,8 +89,7 @@ class GameViewController: UIViewController {
         view.addSubview(titleLabel)
         view.addSubview(subtitleLabel)
         view.addSubview(bapContainer)
-        view.addSubview(mapButton)
-        view.addSubview(historyButton)
+        view.addSubview(menuButton)
         bapContainer.addSubview(bapImage)
         bapContainer.addSubview(bapCount)
         scrollView.addSubview(tileContainer)
@@ -127,14 +122,10 @@ class GameViewController: UIViewController {
             make.leading.equalTo(bapImage.snp.trailing).offset(4)
         }
         
-        mapButton.snp.makeConstraints { make in
+        menuButton.snp.makeConstraints { make in
             make.centerY.equalTo(bapContainer)
-            make.leading.equalToSuperview().offset(20)
-        }
-        
-        historyButton.snp.makeConstraints { make in
-            make.top.equalTo(mapButton.snp.bottom).offset(8)
-            make.leading.equalToSuperview().offset(20)
+            make.width.height.equalTo(36)
+            make.leading.equalToSuperview().offset(30)
         }
         
         scrollView.snp.makeConstraints {
@@ -161,8 +152,7 @@ class GameViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(bapTapped))
         bapContainer.addGestureRecognizer(tapGesture)
         
-        mapButton.addTarget(self, action: #selector(moveToMap), for: .touchUpInside)
-        historyButton.addTarget(self, action: #selector(moveToHistory), for: .touchUpInside)
+        menuButton.addTarget(self, action: #selector(showSideMenu), for: .touchUpInside)
     }
     
     private func setupBindings() {
@@ -384,7 +374,7 @@ class GameViewController: UIViewController {
         topViewController()?.present(navi, animated: true)
     }
     
-    @objc private func moveToMap() {
+    private func moveToMap() {
         // 진동
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
@@ -397,13 +387,21 @@ class GameViewController: UIViewController {
         self.navigationController?.pushViewController(mapVC, animated: true)
     }
     
-    @objc private func moveToHistory() {
+    private func moveToHistory() {
         // 진동
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
         
         let vc = HistoryViewController()
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    // 햄버거 버튼 탭 시
+    @objc private func showSideMenu() {
+        let menuVC = SideMenuViewController()
+        menuVC.onTapMap = { [weak self] in self?.moveToMap() }
+        menuVC.onTapHistory = { [weak self] in self?.moveToHistory() }
+        menuVC.present(from: self)
     }
 }
 
