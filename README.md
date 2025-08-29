@@ -46,4 +46,4 @@
 ---
 
 ## 🔗 Download
-👉 [App Store]([https://apps.apple.com](https://apps.apple.com/kr/app/%EA%BC%AC%EB%93%A4%EB%B0%A5/id6743940898))  
+👉 [App Store](https://apps.apple.com/kr/app/%EA%BC%AC%EB%93%A4%EB%B0%A5/id6743940898)  
