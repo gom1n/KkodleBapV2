@@ -30,34 +30,10 @@
 
 ---
 
-## 🗂️ Project Structure
-<details>
-<summary>클릭해서 확인하기 ✔️</summary>
-KkodleBap/
-├─ AppDelegate.swift
-├─ SceneDelegate.swift
-├─ GameViewController.swift
-├─ KeyboardView.swift
-├─ History/
-│   ├─ HistoryViewController.swift
-│   ├─ HistoryDetailViewController.swift
-│   └─ HistoryStore.swift
-├─ Ads/
-│   └─ AdMobViewController.swift
-├─ Common/
-│   ├─ Extensions/
-│   └─ UIComponents/
-└─ Resources/
-└─ Assets.xcassets
-</details>
-
----
-
 ## 🔐 Copyright & License
 이 프로젝트는 다음 데이터를 포함하고 있습니다:
 
-- **국립국어원 표준국어대사전 표제어 DB**  
-- **국립국어원 한국어 학습용 어휘 목록(예상)**  
+- **국립국어원 표준국어대사전 표제어 DB** 
 
 > ⚖️ 저작권 안내  
 > - 국가에 의해 작성되어 공표된 저작물은 저작권법 제24조의2에 따라 자유롭게 이용할 수 있습니다.  
