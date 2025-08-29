@@ -1,7 +1,5 @@
 # 🍚 꼬들밥(KkodleBap) 🍚
 
-![logo](./assets/logo.png)
-
 한글 자모 6개로 정답을 맞히는 게임, **꼬들밥!**  
 귀여운 고봉밥과 함께 한글 자모 게임의 매력에 빠져보세요.  
 오늘의 꼬들밥, 당신은 찾을 수 있을까요?
@@ -10,9 +8,14 @@
 
 ## 📷 Screenshots
 
-| 스플래시 | 게임 화면 | 정답 입력 | 튜토리얼 | 정답 화면 | 오답 화면 |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| ![](./assets/splash.png) | ![](./assets/game.png) | ![](./assets/game-input.png) | ![](./assets/tutorial.png) | ![](./assets/correct.png) | ![](./assets/wrong.png) |
+| 스플래시 | 게임화면1 | 게임화면2 | 정답화면 | 튜토리얼 |
+|:---:|:---:|:---:|:---:|:---:|
+| <img src="https://github.com/user-attachments/assets/824529a2-f2b5-46c1-96ae-c00a56aa8614" width="150"/> | <img src="https://github.com/user-attachments/assets/c35e51fa-28d5-478b-9b4d-f6e0c03bf98f" width="150"/> | <img src="https://github.com/user-attachments/assets/0d89ff96-0ea0-407f-90d6-0544cd3df279" width="150"/> | <img src="https://github.com/user-attachments/assets/b5b6a9dd-3c34-414e-9a29-4eb01711fceb" width="150"/> | <img src="https://github.com/user-attachments/assets/072e698d-eed6-4c6f-b952-4f02522619b3" width="150"/> |
+
+
+
+
+
 
 ---
 
