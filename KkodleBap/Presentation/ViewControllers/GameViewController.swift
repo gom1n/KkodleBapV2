@@ -183,6 +183,25 @@ class GameViewController: UIViewController {
     }
     
     private func setupBindings() {
+        UserManager.$bappool
+            .receive(on: RunLoop.main)
+            .sink { [weak self] value in
+                // 5개 이상 모였는지 확인
+                if value >= 5 {
+                    let extraBap = value / 5
+                    let remainingPool = value % 5
+                    
+                    UserManager.bap += extraBap
+                    UserManager.bappool = remainingPool
+                    
+                    self?.bapPoolCount.text = String(remainingPool)
+                } else {
+                    // 5 미만이면 그냥 표시만
+                    self?.bapPoolCount.text = String(value)
+                }
+            }
+            .store(in: &cancellables)
+
         UserManager.$bap
             .receive(on: RunLoop.main)
             .sink { [weak self] value in
@@ -270,6 +289,9 @@ class GameViewController: UIViewController {
     }
     
     private func showSuccessAlert() {
+        // 보상: 밥풀 하나 추가
+        UserManager.bappool += 1
+        
         // 기기에 히스토리 저장
         let resultImage = self.tileContainer.captureAsImage()
         let imagePath = self.saveImage(resultImage, fileName: UUID().uuidString)
@@ -329,7 +351,6 @@ class GameViewController: UIViewController {
         
         if UserManager.bap > 0 {
             builder.addAction(.init("계속할래요", style: .primary) {
-                // TODO: Logic
                 UserManager.bap -= 1
                 
                 self.dismiss(animated: true)
@@ -339,11 +360,6 @@ class GameViewController: UIViewController {
                     self?.scrollView.scrollToBottom()
                 }
                 
-            })
-        } else {
-            builder.addAction(.init("광고 보고\n계속 맞춰보기", style: .primary) {
-                // TODO: Logic
-                self.bapTapped()
             })
         }
             
@@ -388,7 +404,7 @@ class GameViewController: UIViewController {
         adVC.rewardAction = { [weak self] success in
             guard let self = self else { return }
             if success {
-                UserManager.bap += 1
+                UserManager.bappool += 1
                 
                 KoodleAlert.Builder()
                     .setTitle("꼬들밥 한 그릇을 얻었습니다!")
