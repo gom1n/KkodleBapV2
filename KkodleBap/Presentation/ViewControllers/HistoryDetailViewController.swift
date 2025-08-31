@@ -66,7 +66,7 @@ final class HistoryDetailViewController: UIViewController {
     // Properties
     
     private let item: HistoryEntry
-    private var imageHeightConstraint: Constraint?
+    private var aspectRatioConstraint: Constraint?
     
     init(item: HistoryEntry, image: UIImage) {
         self.item = item
@@ -80,6 +80,10 @@ final class HistoryDetailViewController: UIViewController {
         closeButton.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
         copyButton.addTarget(self, action: #selector(copyButtonTapped), for: .touchUpInside)
         saveImageButton.addTarget(self, action: #selector(saveImageButtonTapped), for: .touchUpInside)
+        
+        if let img = imageView.image {
+           setImage(img)
+       }
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -129,9 +133,9 @@ final class HistoryDetailViewController: UIViewController {
             make.top.equalTo(tryCountLabel.snp.bottom).offset(16)
             make.leading.trailing.equalToSuperview().inset(30)
             make.centerX.equalToSuperview()
-            // 높이는 일단 placeholder (0)
-            self.imageHeightConstraint = make.height.equalTo(0).constraint
-            make.bottom.equalToSuperview().inset(24).priority(.low)
+//            // 높이는 일단 placeholder (0)
+//            self.imageHeightConstraint = make.height.equalTo(0).constraint
+//            make.bottom.equalToSuperview().inset(24).priority(.low)
         }
         
         copyButton.snp.makeConstraints { make in
@@ -147,16 +151,14 @@ final class HistoryDetailViewController: UIViewController {
         }
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    private func setImage(_ image: UIImage) {
+        imageView.image = image
         
-        // 실제 이미지 크기로 높이 갱신
-        if let img = imageView.image, img.size.width > 0 {
-            let ratio = img.size.height / img.size.width
-            let newHeight = imageView.bounds.width * ratio
-            imageHeightConstraint?.update(offset: newHeight)
-        } else {
-            imageHeightConstraint?.update(offset: 120)
+        // 기존 제약 해제 후 새로 설정
+        aspectRatioConstraint?.deactivate()
+        let ratio = image.size.height / image.size.width
+        imageView.snp.makeConstraints { make in
+            aspectRatioConstraint = make.height.equalTo(imageView.snp.width).multipliedBy(ratio).constraint
         }
     }
 

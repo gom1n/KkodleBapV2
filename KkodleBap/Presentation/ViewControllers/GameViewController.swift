@@ -252,11 +252,17 @@ class GameViewController: UIViewController {
                                       tryCount: viewModel.attempts.count,
                                       resultCopyString: viewModel.copyResultToClipboard()))
         
-        // TODO: 성공 image
+        // 성공 gif
+        let imageView = UIImageView()
+        imageView.loadGIF(named: "kkodlebap_success")
+        imageView.widthAnchor.constraint(equalToConstant: 300).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 300).isActive = true
         
+        // alert
         KoodleAlert.Builder()
             .setAnswerTitle(viewModel.rawAnswer)
             .setMessage("축하합니다!\n밥풀을 모은 꼬들이는 행복해요.")
+            .addCustomView(imageView)
             .addAction(.init("결과 복사하기", style: .secondary) {
                 let result = self.viewModel.copyResultToClipboard()
                 UIPasteboard.general.string = result
