@@ -13,10 +13,10 @@ final class MapsViewController: UIViewController {
 
     private var collectionView: UICollectionView!
     private var items: [MapItem] = [
-        MapItem(name: "꼬들밥 (5자리)", length: .five, imageName: "map_5"),
-        MapItem(name: "현미밥 (6자리)", length: .six, imageName: "map_6"),
-        MapItem(name: "콩밥 (7자리)", length: .seven, imageName: "map_7"),
-        MapItem(name: "흑미밥 (8자리)", length: .eight, imageName: "map_8")
+        MapItem(name: "꼬들밥 (5자리)", length: .five, imageName: "map_5", locked: UserManager.map5Locked),
+        MapItem(name: "현미밥 (6자리)", length: .six, imageName: "map_6", locked: UserManager.map6Locked),
+        MapItem(name: "콩밥 (7자리)", length: .seven, imageName: "map_7", locked: UserManager.map7Locked),
+        MapItem(name: "흑미밥 (8자리)", length: .eight, imageName: "map_8", locked: UserManager.map8Locked)
     ]
     
     public var mapChangeAction: (() -> Void)?
@@ -89,10 +89,82 @@ extension MapsViewController: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
         let item = items[indexPath.item]
-        UserManager.mapVersion = item.length.rawValue
-        self.navigationController?.popViewController(animated: true)
-        mapChangeAction?()
         print("Selected map:", item.name, "length:", item.length.rawValue)
+        
+        if item.locked {
+            let needBapCount = item.length.rawValue
+            
+            let container = UIView()
+            let imageContainer = UIView()
+            let bapImage = UIImageView().then {
+                $0.image = .bap
+            }
+            let countLabel = UILabel().then {
+                $0.text = String("X \(needBapCount)")
+                $0.textColor = .black
+                $0.font = .systemFont(ofSize: 28, weight: .bold)
+                $0.textAlignment = .center
+            }
+            
+            container.addSubview(imageContainer)
+            imageContainer.addSubview(bapImage)
+            imageContainer.addSubview(countLabel)
+            
+            bapImage.snp.makeConstraints { make in
+                make.width.height.equalTo(80)
+                make.top.leading.bottom.equalToSuperview()
+            }
+            countLabel.snp.makeConstraints { make in
+                make.leading.equalTo(bapImage.snp.trailing).offset(8)
+                make.centerY.equalTo(bapImage)
+                make.trailing.equalToSuperview()
+            }
+            imageContainer.snp.makeConstraints { make in
+                make.centerY.centerX.equalToSuperview()
+                make.top.bottom.equalToSuperview()
+            }
+            
+            let builder = KoodleAlert.Builder()
+                            .setTitle("꼬들밥을 소진해 \(needBapCount)자리 맵을 경험해보세요!")
+                            .setMessage("꼬들밥 \(needBapCount)개 소진하시겠습니까?")
+                            .addCustomView(container)
+                            .addAction(.init("다음에", style: .secondary) { [weak self] in
+                                self?.dismiss(animated: true)
+                            })
+            
+            // 꼬들밥 개수가 있을 때
+            if UserManager.bap > needBapCount {
+                builder.addAction(.init("네!", style: .primary) { [weak self] in
+                    self?.dismiss(animated: true)
+                    // 꼬들밥 그릇 소진
+                    UserManager.bap -= needBapCount
+                    // 맵 진입
+                    UserManager.mapVersion = item.length.rawValue
+                    // 맵 잠금 해제
+                    switch item.length {
+                    case .five:
+                        UserManager.map5Locked = false
+                    case .six:
+                        UserManager.map6Locked = false
+                    case .seven:
+                        UserManager.map7Locked = false
+                    case .eight:
+                        UserManager.map8Locked = false
+                    }
+                    self?.navigationController?.popViewController(animated: true)
+                    self?.mapChangeAction?()
+                })
+            }
+            
+            builder.present()
+            
+        } else {
+            // 맵 선택
+            UserManager.mapVersion = item.length.rawValue
+            self.navigationController?.popViewController(animated: true)
+            mapChangeAction?()
+        }
     }
 }

@@ -39,6 +39,7 @@ class GameViewController: UIViewController {
         $0.textColor = .black
         $0.font = .systemFont(ofSize: 28, weight: .bold)
         $0.textAlignment = .center
+        $0.lineBreakMode = .byTruncatingMiddle
     }
     
     private let bapImage = UIImageView().then {
@@ -51,6 +52,7 @@ class GameViewController: UIViewController {
         $0.textColor = .black
         $0.font = .systemFont(ofSize: 28, weight: .bold)
         $0.textAlignment = .center
+        $0.lineBreakMode = .byTruncatingMiddle
     }
     
     private let menuButton = UIButton(type: .system).then {
@@ -124,6 +126,8 @@ class GameViewController: UIViewController {
         bapContainer.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(4)
             make.trailing.equalToSuperview().offset(-20)
+            make.leading.greaterThanOrEqualTo(subtitleLabel.snp.trailing)
+            make.leading.greaterThanOrEqualTo(titleLabel.snp.trailing)
         }
         
         bapPoolImage.snp.makeConstraints {
