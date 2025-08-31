@@ -29,6 +29,18 @@ class GameViewController: UIViewController {
         $0.isUserInteractionEnabled = true
     }
     
+    private let bapPoolImage = UIImageView().then {
+        $0.image = .bapPool.withRenderingMode(.alwaysOriginal)
+        $0.contentMode = .scaleAspectFit
+    }
+    
+    private let bapPoolCount = UILabel().then {
+        $0.text = String(UserManager.bappool)
+        $0.textColor = .black
+        $0.font = .systemFont(ofSize: 28, weight: .bold)
+        $0.textAlignment = .center
+    }
+    
     private let bapImage = UIImageView().then {
         $0.image = .bap.withRenderingMode(.alwaysOriginal)
         $0.contentMode = .scaleAspectFit
@@ -90,6 +102,8 @@ class GameViewController: UIViewController {
         view.addSubview(subtitleLabel)
         view.addSubview(bapContainer)
         view.addSubview(menuButton)
+        bapContainer.addSubview(bapPoolImage)
+        bapContainer.addSubview(bapPoolCount)
         bapContainer.addSubview(bapImage)
         bapContainer.addSubview(bapCount)
         scrollView.addSubview(tileContainer)
@@ -112,24 +126,37 @@ class GameViewController: UIViewController {
             make.trailing.equalToSuperview().offset(-20)
         }
         
+        bapPoolImage.snp.makeConstraints {
+            $0.leading.top.equalToSuperview()
+            $0.width.height.equalTo(50)
+        }
+        
+        bapPoolCount.snp.makeConstraints { make in
+            make.centerY.equalTo(bapPoolImage)
+            make.trailing.equalToSuperview()
+            make.leading.equalTo(bapPoolImage.snp.trailing).offset(4)
+        }
+        
         bapImage.snp.makeConstraints {
-            $0.leading.centerY.top.bottom.equalToSuperview()
+            $0.top.equalTo(bapPoolImage.snp.bottom)
+            $0.leading.bottom.equalToSuperview()
             $0.width.height.equalTo(50)
         }
         
         bapCount.snp.makeConstraints { make in
-            make.centerY.trailing.equalToSuperview()
+            make.centerY.equalTo(bapImage)
+            make.trailing.equalToSuperview()
             make.leading.equalTo(bapImage.snp.trailing).offset(4)
         }
         
         menuButton.snp.makeConstraints { make in
-            make.centerY.equalTo(bapContainer)
+            make.top.equalTo(bapContainer).offset(8)
             make.width.height.equalTo(36)
             make.leading.equalToSuperview().offset(30)
         }
         
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(subtitleLabel.snp.bottom).offset(30)
+            $0.top.equalTo(bapContainer.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(45)
             $0.bottom.equalTo(keyboardView.snp.top).offset(-60)
         }
