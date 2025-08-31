@@ -13,10 +13,10 @@ final class MapsViewController: UIViewController {
 
     private var collectionView: UICollectionView!
     private var items: [MapItem] = [
-        MapItem(name: "5자리 맵", length: .five, imageName: nil),
-        MapItem(name: "6자리 맵", length: .six, imageName: nil),
-        MapItem(name: "7자리 맵", length: .seven, imageName: nil),
-        MapItem(name: "8자리 맵", length: .eight, imageName: nil)
+        MapItem(name: "꼬들밥 (5자리)", length: .five, imageName: "map_5"),
+        MapItem(name: "현미밥 (6자리)", length: .six, imageName: "map_6"),
+        MapItem(name: "콩밥 (7자리)", length: .seven, imageName: "map_7"),
+        MapItem(name: "흑미밥 (8자리)", length: .eight, imageName: "map_8")
     ]
     
     public var mapChangeAction: (() -> Void)?
@@ -91,6 +91,7 @@ extension MapsViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let item = items[indexPath.item]
         UserManager.mapVersion = item.length.rawValue
+        self.navigationController?.popViewController(animated: true)
         mapChangeAction?()
         print("Selected map:", item.name, "length:", item.length.rawValue)
     }
