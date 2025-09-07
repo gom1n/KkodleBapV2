@@ -49,8 +49,8 @@ class AdMobViewController: UIViewController, FullScreenContentDelegate {
     func loadRewardedAd() async {
         do {
             rewardedAd = try await RewardedAd.load(
-                // Replace this ad unit ID with your own ad unit ID.
-                with: "ca-app-pub-3940256099942544/1712485313", request: Request())
+                // 광고 앱 ID
+                with: "ca-app-pub-8570424711351250~9069249695", request: Request())
             rewardedAd?.fullScreenContentDelegate = self
         } catch {
             print("Rewarded ad failed to load with error: \(error.localizedDescription)")
