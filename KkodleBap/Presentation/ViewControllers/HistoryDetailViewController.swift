@@ -50,18 +50,18 @@ final class HistoryDetailViewController: UIViewController {
         $0.setTitleColor(.gray_0, for: .normal)
     }
     
-    private let saveImageButton = UIButton(type: .system).then{
-        $0.setTitle("이미지 저장하기", for: .normal)
-        $0.titleLabel?.font = .preferredFont(forTextStyle: .headline)
-        $0.titleLabel?.numberOfLines = 0
-        $0.layer.cornerRadius = 8
-        $0.clipsToBounds = true
-        $0.contentEdgeInsets = UIEdgeInsets(top: 14, left: 8, bottom: 14, right: 8)
-        $0.backgroundColor = .gray_0
-        $0.layer.borderColor = UIColor.blue_6.cgColor
-        $0.layer.borderWidth = 1
-        $0.setTitleColor(.blue_6, for: .normal)
-    }
+//    private let saveImageButton = UIButton(type: .system).then{
+//        $0.setTitle("이미지 저장하기", for: .normal)
+//        $0.titleLabel?.font = .preferredFont(forTextStyle: .headline)
+//        $0.titleLabel?.numberOfLines = 0
+//        $0.layer.cornerRadius = 8
+//        $0.clipsToBounds = true
+//        $0.contentEdgeInsets = UIEdgeInsets(top: 14, left: 8, bottom: 14, right: 8)
+//        $0.backgroundColor = .gray_0
+//        $0.layer.borderColor = UIColor.blue_6.cgColor
+//        $0.layer.borderWidth = 1
+//        $0.setTitleColor(.blue_6, for: .normal)
+//    }
     
     // Properties
     
@@ -79,7 +79,7 @@ final class HistoryDetailViewController: UIViewController {
         
         closeButton.addTarget(self, action: #selector(dismissView), for: .touchUpInside)
         copyButton.addTarget(self, action: #selector(copyButtonTapped), for: .touchUpInside)
-        saveImageButton.addTarget(self, action: #selector(saveImageButtonTapped), for: .touchUpInside)
+//        saveImageButton.addTarget(self, action: #selector(saveImageButtonTapped), for: .touchUpInside)
         
         if let img = imageView.image {
            setImage(img)
@@ -99,7 +99,7 @@ final class HistoryDetailViewController: UIViewController {
         contentView.addSubview(tryCountLabel)
         contentView.addSubview(imageView)
         view.addSubview(copyButton)
-        view.addSubview(saveImageButton)
+//        view.addSubview(saveImageButton)
         
         scrollView.snp.makeConstraints { make in
             make.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
@@ -138,13 +138,13 @@ final class HistoryDetailViewController: UIViewController {
 //            make.bottom.equalToSuperview().inset(24).priority(.low)
         }
         
-        copyButton.snp.makeConstraints { make in
-            make.height.equalTo(50)
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalTo(saveImageButton.snp.top).offset(-16)
-        }
+//        copyButton.snp.makeConstraints { make in
+//            make.height.equalTo(50)
+//            make.leading.trailing.equalToSuperview().inset(16)
+//            make.bottom.equalTo(saveImageButton.snp.top).offset(-16)
+//        }
         
-        saveImageButton.snp.makeConstraints { make in
+        copyButton.snp.makeConstraints { make in
             make.height.equalTo(50)
             make.leading.trailing.equalToSuperview().inset(16)
             make.bottom.equalTo(self.view.safeAreaLayoutGuide).offset(-16)
@@ -167,6 +167,10 @@ final class HistoryDetailViewController: UIViewController {
     }
     
     @objc private func copyButtonTapped() {
+        // 진동
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+        
         if let resultCopyString = self.item.resultCopyString {
             UIPasteboard.general.string = resultCopyString
         }

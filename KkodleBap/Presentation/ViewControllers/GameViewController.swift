@@ -459,7 +459,7 @@ class GameViewController: UIViewController {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
         
-        let mapVC = MapsViewController()
+        let mapVC = MapsViewController(entry: .menu)
         mapVC.mapChangeAction = { [weak self] in
             self?.viewModel.resetGame()
             self?.renderTiles()
@@ -478,6 +478,10 @@ class GameViewController: UIViewController {
     
     // 햄버거 버튼 탭 시
     @objc private func showSideMenu() {
+        // 진동
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+        
         let menuVC = SideMenuViewController()
         menuVC.onTapMap = { [weak self] in self?.moveToMap() }
         menuVC.onTapHistory = { [weak self] in self?.moveToHistory() }

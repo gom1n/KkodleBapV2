@@ -217,6 +217,10 @@ extension HistoryViewController: UITableViewDataSource, UITableViewDelegate {
     
     // 탭 액션
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // 진동
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+        
         let record = sections[indexPath.section].items[indexPath.row]
 
         if let path = record.imagePath,

@@ -50,10 +50,10 @@ enum UserManager {
     @UserDefault(key: "user.username", defaultValue: "")
     static var username: String
     
-    @UserDefault(key: "map.5.lock", defaultValue: false)
+    @UserDefault(key: "map.5.lock", defaultValue: true)
     static var map5Locked: Bool
     
-    @UserDefault(key: "map.6.lock", defaultValue: true)
+    @UserDefault(key: "map.6.lock", defaultValue: false)
     static var map6Locked: Bool
     
     @UserDefault(key: "map.7.lock", defaultValue: true)

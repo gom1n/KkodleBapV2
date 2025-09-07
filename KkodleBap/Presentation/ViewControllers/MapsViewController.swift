@@ -9,6 +9,11 @@ import UIKit
 import SnapKit
 import Then
 
+public enum MapPageEntry {
+    case onboarding
+    case menu
+}
+
 final class MapsViewController: UIViewController {
 
     private var collectionView: UICollectionView!
@@ -20,7 +25,21 @@ final class MapsViewController: UIViewController {
     ]
     
     public var mapChangeAction: (() -> Void)?
-
+    private let entry: MapPageEntry
+    
+    // MARK: - Initializers
+    
+    init(entry: MapPageEntry = .onboarding) {
+        self.entry = entry
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Life Cycles
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .gray_0
@@ -29,15 +48,23 @@ final class MapsViewController: UIViewController {
         configureNavigationBar()
         configureCollectionView()
     }
+    
+    // MARK: - Methods
 
     // 🔙 네비게이션 바 설정
     private func configureNavigationBar() {
         navigationItem.title = "맵 선택"
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .close,
-            target: self,
-            action: #selector(didTapBack)
-        )
+        
+        switch self.entry {
+        case .onboarding:
+            break
+        case .menu:
+            navigationItem.leftBarButtonItem = UIBarButtonItem(
+                barButtonSystemItem: .close,
+                target: self,
+                action: #selector(didTapBack)
+            )
+        }
     }
     
     @objc private func didTapBack() {
@@ -153,8 +180,8 @@ extension MapsViewController: UICollectionViewDelegateFlowLayout {
                     case .eight:
                         UserManager.map8Locked = false
                     }
-                    self?.navigationController?.popViewController(animated: true)
-                    self?.mapChangeAction?()
+                    
+                    self?.moveToSelectedMap()
                 })
             }
             
@@ -163,8 +190,32 @@ extension MapsViewController: UICollectionViewDelegateFlowLayout {
         } else {
             // 맵 선택
             UserManager.mapVersion = item.length.rawValue
+            self.moveToSelectedMap()
+        }
+    }
+    
+    /// 선택한 맵으로 이동
+    private func moveToSelectedMap() {
+        // 진동
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+        
+        switch self.entry {
+        case .onboarding:
+            guard let window = UIApplication.shared.windows.first else { return }
+            let targetVC = GameViewController() // 게임 화면으로 이동
+            let nav = UINavigationController(rootViewController: targetVC)
+            
+            // 전환 애니메이션
+            UIView.transition(with: window,
+                              duration: 0.3,
+                              options: .transitionCrossDissolve, // 자연스럽게 페이드 인/아웃
+                              animations: {
+                                  window.rootViewController = nav
+                              }, completion: nil)
+        case .menu:
             self.navigationController?.popViewController(animated: true)
-            mapChangeAction?()
+            self.mapChangeAction?()
         }
     }
 }

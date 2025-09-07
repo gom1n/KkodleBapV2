@@ -81,8 +81,8 @@ class SplashViewController: UIViewController {
             self.subtitleLabel.alpha = 1
         }) { _ in
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                let gameVC = GameViewController()
-                let nav = UINavigationController(rootViewController: gameVC)
+                let firstVC = MapsViewController(entry: .onboarding)
+                let nav = UINavigationController(rootViewController: firstVC)
                 nav.modalPresentationStyle = .fullScreen
                 self.present(nav, animated: true, completion: nil)
             }
