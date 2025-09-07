@@ -403,7 +403,28 @@ class GameViewController: UIViewController {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
         
-        // TODO: Logic
+        let imageView = UIImageView(image: .bapPool)
+        imageView.contentMode = .scaleAspectFit
+        imageView.heightAnchor.constraint(equalToConstant: 120).isActive = true
+        
+        KoodleAlert.Builder()
+            .setTitle("광고 보고 밥풀 하나 받을래요?")
+            .setMessage("밥풀을 5개 모으면 꼬들밥 한 그릇이 됩니다!")
+            .addCustomView(imageView)
+            .addAction(.init("아니오", style: .secondary) {
+                self.dismiss(animated: true)
+            })
+            .addAction(.init("광고 보기", style: .primary) {
+                self.dismiss(animated: true) {
+                    self.watchAdmob()
+                }
+            })
+            .present(from: self)
+        
+    }
+    
+    /// 광고 시청
+    private func watchAdmob() {
         let adVC = AdMobViewController()
         adVC.rewardAction = { [weak self] success in
             guard let self = self else { return }
