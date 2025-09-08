@@ -49,7 +49,8 @@ class AdMobViewController: UIViewController, FullScreenContentDelegate {
     func loadRewardedAd() async {
         do {
             rewardedAd = try await RewardedAd.load(
-                // 광고 앱 ID
+                // 보상형 광고 앱 ID
+                // 테스트용: ca-app-pub-3940256099942544~1458002511
                 with: "ca-app-pub-8570424711351250~9069249695", request: Request())
             rewardedAd?.fullScreenContentDelegate = self
         } catch {
