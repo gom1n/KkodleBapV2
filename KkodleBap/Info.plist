@@ -2,6 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!--  이 ID는 Admob에 등록된 앱의 ID (광고단위 ID 아님)  -->
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-8570424711351250~9069249695</string>
 	<key>SKAdNetworkItems</key>
