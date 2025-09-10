@@ -9,6 +9,8 @@ import UIKit
 import SnapKit
 import Then
 import GoogleMobileAds
+import AppTrackingTransparency
+import AdSupport
 
 class AdMobViewController: UIViewController, FullScreenContentDelegate {
     
@@ -20,6 +22,8 @@ class AdMobViewController: UIViewController, FullScreenContentDelegate {
         view.backgroundColor = .gray_0
         
         setupViews()
+        // 권한 허용 알럿창
+        requestATTIfNeeded()
         
         Task {
             do {
@@ -95,6 +99,28 @@ class AdMobViewController: UIViewController, FullScreenContentDelegate {
         
         self.dismiss(animated: false) {
             self.rewardAction?(false)
+        }
+    }
+}
+
+extension AdMobViewController {
+    /// ATT 여부 확인 및 권한 허용 알럿창 노출
+    func requestATTIfNeeded() {
+        if #available(iOS 14, *) {
+            let status = ATTrackingManager.trackingAuthorizationStatus
+            switch status {
+            case .notDetermined:
+                // 아직 동의 여부를 물어본 적 없음 → 요청 가능
+                ATTrackingManager.requestTrackingAuthorization { newStatus in
+                    print("New status: \(newStatus.rawValue)")
+                }
+            case .authorized:
+                print("Already authorized. IDFA: \(ASIdentifierManager.shared().advertisingIdentifier)")
+            case .denied, .restricted:
+                print("Tracking not allowed")
+            @unknown default:
+                break
+            }
         }
     }
 }

@@ -18,8 +18,8 @@ final class MapsViewController: UIViewController {
 
     private var collectionView: UICollectionView!
     private var items: [MapItem] = [
-        MapItem(name: "꼬들밥 (5자리)", length: .five, imageName: "map_5", locked: UserManager.map5Locked),
-        MapItem(name: "현미밥 (6자리)", length: .six, imageName: "map_6", locked: UserManager.map6Locked),
+        MapItem(name: "현미밥 (5자리)", length: .five, imageName: "map_5", locked: UserManager.map5Locked),
+        MapItem(name: "꼬들밥 (6자리)", length: .six, imageName: "map_6", locked: UserManager.map6Locked),
         MapItem(name: "콩밥 (7자리)", length: .seven, imageName: "map_7", locked: UserManager.map7Locked),
         MapItem(name: "흑미밥 (8자리)", length: .eight, imageName: "map_8", locked: UserManager.map8Locked)
     ]
@@ -162,7 +162,7 @@ extension MapsViewController: UICollectionViewDelegateFlowLayout {
                             })
             
             // 꼬들밥 개수가 있을 때
-            if UserManager.bap > needBapCount {
+            if UserManager.bap >= needBapCount {
                 builder.addAction(.init("네!", style: .primary) { [weak self] in
                     self?.dismiss(animated: true)
                     // 꼬들밥 그릇 소진

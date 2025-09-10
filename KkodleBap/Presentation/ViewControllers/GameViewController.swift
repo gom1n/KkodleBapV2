@@ -288,7 +288,7 @@ class GameViewController: UIViewController {
         if viewModel.didWin {
             self.showSuccessAlert()
         } else {
-            self.showChallengeAlert()
+            UserManager.bappool > 0 ? self.showChallengeAlert() : self.showFailAlert()
         }
     }
     
