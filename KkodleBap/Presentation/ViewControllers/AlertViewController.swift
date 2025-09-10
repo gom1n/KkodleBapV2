@@ -230,7 +230,7 @@ public final class KoodleAlertViewController: UIViewController {
 
     @objc private func didTapOutside() {
         // 필요 시 바깥 탭으로 닫기 허용/비허용 토글 가능
-        dismiss(animated: true, completion: nil)
+//        dismiss(animated: true, completion: nil)
     }
 }
 

@@ -407,14 +407,52 @@ class GameViewController: UIViewController {
         imageView.contentMode = .scaleAspectFit
         imageView.heightAnchor.constraint(equalToConstant: 120).isActive = true
         
+        let container = UIView()
+        let imageContainer = UIView()
+        let bapPoolImage = UIImageView().then {
+            $0.image = .bapPool
+        }
+        let countLabel = UILabel().then {
+            $0.text = String("X 5 = ")
+            $0.textColor = .black
+            $0.font = .systemFont(ofSize: 28, weight: .bold)
+            $0.textAlignment = .center
+        }
+        let bapImage = UIImageView().then {
+            $0.image = .bap
+        }
+        
+        container.addSubview(imageContainer)
+        imageContainer.addSubview(bapPoolImage)
+        imageContainer.addSubview(countLabel)
+        imageContainer.addSubview(bapImage)
+        
+        bapPoolImage.snp.makeConstraints { make in
+            make.width.height.equalTo(60)
+            make.leading.centerY.equalToSuperview()
+        }
+        countLabel.snp.makeConstraints { make in
+            make.leading.equalTo(bapPoolImage.snp.trailing)
+            make.centerY.equalTo(bapPoolImage)
+        }
+        bapImage.snp.makeConstraints { make in
+            make.width.height.equalTo(80)
+            make.leading.equalTo(countLabel.snp.trailing)
+            make.top.trailing.bottom.equalToSuperview()
+        }
+        imageContainer.snp.makeConstraints { make in
+            make.centerY.centerX.equalToSuperview()
+            make.top.bottom.equalToSuperview()
+        }
+        
         KoodleAlert.Builder()
-            .setTitle("광고 보고 밥풀 하나 받을래요?")
-            .setMessage("밥풀을 5개 모으면 꼬들밥 한 그릇이 됩니다!")
-            .addCustomView(imageView)
-            .addAction(.init("아니오", style: .secondary) {
+            .setTitle("꼬들밥 한 그릇으로\n보너스 기회를 얻을 수 있어요!")
+            .setMessage("단어 맞추기에 성공하면 밥풀을 1개 얻습니다.")
+            .addCustomView(container)
+            .addAction(.init("닫기", style: .secondary) {
                 self.dismiss(animated: true)
             })
-            .addAction(.init("광고 보기", style: .primary) {
+            .addAction(.init("광고 보고 밥풀 얻기", style: .primary) {
                 self.dismiss(animated: true) {
                     self.watchAdmob()
                 }
