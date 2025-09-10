@@ -520,10 +520,15 @@ class GameViewController: UIViewController {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
         
-        let menuVC = SideMenuViewController()
-        menuVC.onTapMap = { [weak self] in self?.moveToMap() }
-        menuVC.onTapHistory = { [weak self] in self?.moveToHistory() }
-        menuVC.present(from: self)
+        let menu = MenuAlertViewController()
+        menu.setTitle("메뉴 선택")
+        menu.addMenuItem(title: "맵 구경하기") { [weak self] in
+            self?.moveToMap()
+        }
+        menu.addMenuItem(title: "히스토리") { [weak self] in
+            self?.moveToHistory()
+        }
+        self.present(menu, animated: true)
     }
 }
 

@@ -27,11 +27,11 @@ public struct KoodleAlertAction {
 public final class KoodleAlertViewController: UIViewController {
 
     // UI
-    public let dimView = UIView().then {
+    fileprivate let dimView = UIView().then {
         $0.backgroundColor = UIColor.black.withAlphaComponent(0.3)
         $0.alpha = 0
     }
-    public let container = UIView().then {
+    fileprivate let container = UIView().then {
         $0.backgroundColor = .gray_0
         $0.layer.cornerRadius = 16
         $0.layer.masksToBounds = true
